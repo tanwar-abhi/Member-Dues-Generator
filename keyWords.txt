@@ -1,0 +1,25 @@
+The following keywords are used from identifiying different fields in the form i.e. docx file.
+Please make sure to follow the same naming conventions for different fields, also these keywords are case sensitive hence if any error occurs then check the keyword entered.
+
+The keywords are of jinga2 syntax thus making it easy for code to fill in the data.
+
+The keywords are ::
+
+Name = {{Name}}
+Date = {{Date}}
+Flat No = {{FlatNo}}
+Membership number = {{MemberNo}}
+
+Previous maintenance dues (Balance) = {{PMB}}  
+Previous maintenance Intrest = {{PMI}}
+Previous maintenance Total (Total Dues) = {{PMTD}}
+
+Construction Cost dues (Balance) = {{CCB}}
+Construction Cost intrest = {{CCI}}
+Construction Cost Total Dues = {{CCTD}}
+
+Total (grand total i.e. sum) = {{GT}}
+
+
+
+
