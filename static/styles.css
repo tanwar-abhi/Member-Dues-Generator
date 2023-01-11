@@ -1,0 +1,17 @@
+
+.heading1 {
+    text-align: center;
+    color: black;
+    font-family: cursive;
+    font-size: 52px;
+}
+
+.heading2{
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    color: purple;
+}
+
+.formField1{
+    align-content: center;
+}
