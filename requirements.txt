@@ -1,0 +1,7 @@
+pandas
+numpy
+docxtpl
+python-docx
+Flask
+jinja2
+
