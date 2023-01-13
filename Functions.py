@@ -42,12 +42,13 @@ def getInputs():
         flatNo = input("Enter Flat No. = ")
         membershipNo = input("Enter membership number = ")
         NextMC = input("Next Maintenance Charges = ")
-        
+
+
     while(len(flatNo.strip()) == 0 and len(membershipNo.strip()) == 0):
         flatNo = input("Enter Flat No. = ")
         membershipNo = input("Enter membership number = ")
-        
-    
+
+
     while(NextMC.isnumeric() == False):
         NextMC = input("Next Maintenance Charges = ")
     
@@ -58,6 +59,7 @@ def getInputs():
     NextMC = int(NextMC)
         
     return flatNo, membershipNo, NextMC
+
 
 
 
@@ -90,7 +92,7 @@ def getData(dataFile):
     # and their payable intrest data.
     memDrop = []
     intDrop = []
-    
+
     # Clean data and fill empty(nan) spaces for intrest data frame
     # len(df)-1 to remove last row as it contains only Totalsum
     # Also, Remove white/unwated space from Flat No column
@@ -119,47 +121,49 @@ def getData(dataFile):
 
 
 
+
 def searchData(flatNo, memNumber,membersDF, intrestDF):
 
-    
+
     if (flatNo.isalnum()):
         xI = list(membersDF['FlatNo.']).index(flatNo)
     else:
         xI = list(membersDF['M.ShipNo.']).index(memNumber)
-        
+
+    # Matching index with the index of excel file
     xI = xI*2 - 1
-        
+
     dictMember = dict(membersDF.loc[xI])
     dictInterest = dict(intrestDF.loc[xI+1])
-    
+
     # Chanaging key names to make easier for querry in document
     data = {"Name" : dictMember["Name"], "FlatNo" : dictMember["FlatNo."],
             "MemberNo" : int(dictMember["M.ShipNo."])}
-    
-    
+
+
     #Get All maintainence balance and intrest on the maintainence
     maintColName = [mc for mc in list(dictMember.keys()) if "Maint" in mc]
-        
+
     # Calculate the maintenance balance for selected member
     maintDue = [dictMember[maintColName[i]] for i in range(0,len(maintColName))]
 
     # Calculate interest on maintenance balance for selected member
     maintIntrest = [dictInterest[maintColName[i]] for i in range(0,len(maintColName))]
-    
+
     ConstCost = [x for x in list(dictMember.keys()) if "Const" in x]
-    
+
 
     # Adding total previous maintenance dues and interest to dictionary for querry
     data["PMB"] = round(sum(maintDue))
     data["CCB"] = round(dictMember[ConstCost[0]])
-    
+
     data["PMI"] = round(sum(maintIntrest))
     data["CCI"] = round(dictInterest[ConstCost[0]])
-    
+
     data["PMTD"] = data["PMB"] + data["PMI"]
     data["CCTD"] = data["CCB"] + data["CCI"]
     data["Date"] = date.today().strftime("%d/%m/%Y")
-    
+
     return data
 
 
@@ -171,7 +175,10 @@ def GenerateDocx(FlatNo, memberNo, nextMC, membersDF, intrestDF, templateFile, f
         memberNo = int(memberNo)
 
     Data = searchData(FlatNo, memberNo, membersDF, intrestDF)
+    # Next Maintenance Charges
     Data["NMC"] = nextMC
+
+    # Total (Grand Total) of the maintenance charges
     Data["GT"] = Data["PMTD"] + Data["CCTD"] + Data["NMC"]
 
     if Data["MemberNo"] == 0:
@@ -195,6 +202,34 @@ def GenerateDocx(FlatNo, memberNo, nextMC, membersDF, intrestDF, templateFile, f
 
 
 
+def generateDefaulters(membersDF, intrestDF, dirName):
+    
+    membersDF.rename(columns = {'Total':'Maintenance Dues'}, inplace = True)
+    intrestDF.rename(columns = {'Total':'Interest on Maintenance'}, inplace = True)
+
+
+    defaulterDF = membersDF.filter(["Sl.No.","Name", "M.ShipNo.", "FlatNo.", "Maintenance Dues"], axis=1)
+    defaulterDF["Interest on Dues"] = intrestDF["Interest on Maintenance"].values
+    defaulterDF["Interest on Dues"] = round(defaulterDF["Interest on Dues"])
+
+    #defaulterDF = defaulterDF.join(intrestDF["FlatNo.INT"])
+    defaulterDF.rename(columns = {'M.ShipNo.':'Membership No.'}, inplace = True)
+    defaulterDF["Total Maintenance Dues"] = defaulterDF["Maintenance Dues"] + defaulterDF["Interest on Dues"]
+
+    # Remove all 0 dues values i.e. non defaulters from Data Frame
+    index_names = defaulterDF[ defaulterDF['Maintenance Dues'] == 0 ].index
+    defaulterDF.drop(index_names, inplace = True)
+    defaulterDF.replace(0, np.nan, inplace=True)
+
+    fileName = dirName + "Defaulters_List_" + date.today().strftime("%m-%Y") + ".xlsx"
+    defaulterDF.to_excel(fileName)
+
+    return
+
+
+
+
+
 
 def main(dataFileName, FlatNo, memberNo, nextMC, templateFile, dirName):
 
@@ -205,7 +240,7 @@ def main(dataFileName, FlatNo, memberNo, nextMC, templateFile, dirName):
 
 
     if (FlatNo.isalpha()):
-        
+
         if FlatNo == 'ALL':
             print("All Flat numbers selected")
             allValues = membersDF["FlatNo."]
@@ -233,6 +268,15 @@ def main(dataFileName, FlatNo, memberNo, nextMC, templateFile, dirName):
 
     else:
         GenerateDocx(FlatNo, memberNo, nextMC, membersDF, intrestDF, templateFile, dirName)
+
+
+    # Defaulter list generation block
+    dSelection = input(("Do you need defaulter's list? "))
+    dSelection = dSelection.upper()
+    
+    if dSelection == "Y" or dSelection == "YES":
+        generateDefaulters(membersDF, intrestDF, dirName)
+
 
     return
 
