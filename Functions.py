@@ -54,10 +54,11 @@ def getInputs():
     
     # Convert user input to uppercase to remove user input discrepancy
     flatNo = flatNo.upper()
-    
+    # membershipNo = membershipNo.upper() // DON'T ADD THIS LINE here
+
     # Set data type as integer
     NextMC = int(NextMC)
-        
+
     return flatNo, membershipNo, NextMC
 
 
@@ -82,12 +83,12 @@ def getData(dataFile):
     # read an excel file and convert
     # into a dataframe object
     df = pd.DataFrame(pd.read_excel(dataFile))
-    
+
     # Remove all white spaces and extra spaces from data column names for efficient calls
     for i in range(0, len(df.columns)):
         #df = df.rename({df.columns[i]:df.columns[i].strip()}, axis=1)
-        df = df.rename({df.columns[i]:"".join(df.columns[i].split())}, axis=1)
-    
+        df = df.rename({df.columns[i]:"".join(df.columns[i].split()).upper()}, axis=1)
+
     # seperating member(memDrop) and intrest(intDrop) index to seperate member data
     # and their payable intrest data.
     memDrop = []
@@ -98,17 +99,17 @@ def getData(dataFile):
     # Also, Remove white/unwated space from Flat No column
     for i in range(1, len(df)-1): 
         if i%2 == 0:
-            if (np.isnan(df.loc[i,"FlatNo."])):
-                df.loc[i, "FlatNo."] = df.loc[i-1, "FlatNo."]
+            if (np.isnan(df.loc[i,"FLATNO."])):
+                df.loc[i, "FLATNO."] = df.loc[i-1, "FLATNO."]
             
-            df.loc[i,"M.ShipNo."] = df.loc[i-1,"M.ShipNo."]
+            df.loc[i,"M.SHIPNO."] = df.loc[i-1,"M.SHIPNO."]
             intDrop.append(i)
         else:
-            if (type(df.loc[i,"FlatNo."]) == str):
-                df.loc[i,"FlatNo."] = df.loc[i,"FlatNo."][0] + df.loc[i,"FlatNo."][2:]
+            if (type(df.loc[i,"FLATNO."]) == str):
+                df.loc[i,"FLATNO."] = df.loc[i,"FLATNO."][0] + df.loc[i,"FLATNO."][2:]
 
             memDrop.append(i)
-    
+
     #Removing last row since it only contains the total sums, not required for our data
     intDrop.append(len(df)-1)
     memDrop.append(len(df)-1)
@@ -126,9 +127,9 @@ def searchData(flatNo, memNumber,membersDF, intrestDF):
 
 
     if (flatNo.isalnum()):
-        xI = list(membersDF['FlatNo.']).index(flatNo)
+        xI = list(membersDF['FLATNO.']).index(flatNo)
     else:
-        xI = list(membersDF['M.ShipNo.']).index(memNumber)
+        xI = list(membersDF['M.SHIPNO.']).index(memNumber)
 
     # Matching index with the index of excel file
     xI = xI*2 - 1
@@ -137,12 +138,12 @@ def searchData(flatNo, memNumber,membersDF, intrestDF):
     dictInterest = dict(intrestDF.loc[xI+1])
 
     # Chanaging key names to make easier for querry in document
-    data = {"Name" : dictMember["Name"], "FlatNo" : dictMember["FlatNo."],
-            "MemberNo" : int(dictMember["M.ShipNo."])}
+    data = {"Name" : dictMember["NAME"], "FlatNo" : dictMember["FLATNO."],
+            "MemberNo" : int(dictMember["M.SHIPNO."])}
 
 
     #Get All maintainence balance and intrest on the maintainence
-    maintColName = [mc for mc in list(dictMember.keys()) if "Maint" in mc]
+    maintColName = [mc for mc in list(dictMember.keys()) if "MAINT" in mc]
 
     # Calculate the maintenance balance for selected member
     maintDue = [dictMember[maintColName[i]] for i in range(0,len(maintColName))]
@@ -150,7 +151,7 @@ def searchData(flatNo, memNumber,membersDF, intrestDF):
     # Calculate interest on maintenance balance for selected member
     maintIntrest = [dictInterest[maintColName[i]] for i in range(0,len(maintColName))]
 
-    ConstCost = [x for x in list(dictMember.keys()) if "Const" in x]
+    ConstCost = [x for x in list(dictMember.keys()) if "CONST" in x]
 
 
     # Adding total previous maintenance dues and interest to dictionary for querry
@@ -163,6 +164,7 @@ def searchData(flatNo, memNumber,membersDF, intrestDF):
     data["PMTD"] = data["PMB"] + data["PMI"]
     data["CCTD"] = data["CCB"] + data["CCI"]
     data["Date"] = date.today().strftime("%d/%m/%Y")
+
 
     return data
 
@@ -202,31 +204,38 @@ def GenerateDocx(FlatNo, memberNo, nextMC, membersDF, intrestDF, templateFile, f
 
 
 
+# Generate defaulter's list in an excel file
 def generateDefaulters(membersDF, intrestDF, dirName):
-    
-    membersDF.rename(columns = {'Total':'Maintenance Dues'}, inplace = True)
-    intrestDF.rename(columns = {'Total':'Interest on Maintenance'}, inplace = True)
+
+    membersDF.rename(columns = {'TOTAL':'Maintenance Dues'}, inplace = True)
+    intrestDF.rename(columns = {'TOTAL':'Interest on Maintenance'}, inplace = True)
 
 
-    defaulterDF = membersDF.filter(["Sl.No.","Name", "M.ShipNo.", "FlatNo.", "Maintenance Dues"], axis=1)
+    defaulterDF = membersDF.filter(["SL.NO.","NAME", "M.SHIPNO.", "FLATNO.", "Maintenance Dues"], axis=1)
     defaulterDF["Interest on Dues"] = intrestDF["Interest on Maintenance"].values
     defaulterDF["Interest on Dues"] = round(defaulterDF["Interest on Dues"])
 
     #defaulterDF = defaulterDF.join(intrestDF["FlatNo.INT"])
-    defaulterDF.rename(columns = {'M.ShipNo.':'Membership No.'}, inplace = True)
+    defaulterDF.rename(columns = {'FLATNO.':'Flat No.'}, inplace = True)
+    defaulterDF.rename(columns = {'M.SHIPNO.':'Membership No.'}, inplace = True)
     defaulterDF["Total Maintenance Dues"] = defaulterDF["Maintenance Dues"] + defaulterDF["Interest on Dues"]
+
+    # Get date of dues calculation form excel file
+    excelDate = str(defaulterDF["NAME"][0])
+    
 
     # Remove all 0 dues values i.e. non defaulters from Data Frame
     index_names = defaulterDF[ defaulterDF['Maintenance Dues'] == 0 ].index
     defaulterDF.drop(index_names, inplace = True)
-    defaulterDF.replace(0, np.nan, inplace=True)
+    defaulterDF.replace(0, np.nan, inplace = True)
+    
+    # Adding final comment
+    defaulterDF.loc[len(defaulterDF)] = [" ", " NOTE: The dues calculation are till", excelDate]
 
     fileName = dirName + "Defaulters_List_" + date.today().strftime("%m-%Y") + ".xlsx"
-    defaulterDF.to_excel(fileName)
+    defaulterDF.to_excel(fileName, index = False)
 
     return
-
-
 
 
 
@@ -240,10 +249,9 @@ def main(dataFileName, FlatNo, memberNo, nextMC, templateFile, dirName):
 
 
     if (FlatNo.isalpha()):
-
         if FlatNo == 'ALL':
             print("All Flat numbers selected")
-            allValues = membersDF["FlatNo."]
+            allValues = membersDF["FLATNO."]
             FlatNo = [i for i in allValues if i!=0]
             for i in FlatNo:
                 GenerateDocx(i, memberNo, nextMC, membersDF, intrestDF, templateFile, dirName)
@@ -256,7 +264,7 @@ def main(dataFileName, FlatNo, memberNo, nextMC, templateFile, dirName):
         memberNo = memberNo.upper()
         if memberNo == 'ALL':
             print("All Member numbers selected")
-            allValues = membersDF["M.ShipNo."]
+            allValues = membersDF["M.SHIPNO."]
             memberNo = [str(int(i)) for i in allValues if i!=0]
             for i in memberNo:
                 GenerateDocx(FlatNo, i, nextMC, membersDF, intrestDF, templateFile, dirName)
@@ -265,18 +273,34 @@ def main(dataFileName, FlatNo, memberNo, nextMC, templateFile, dirName):
             print("\nERROR INVALID INPUT ::  Please check your input and run the code again\n")
             sys.exit("INVALID INPUTS")
 
-
     else:
         GenerateDocx(FlatNo, memberNo, nextMC, membersDF, intrestDF, templateFile, dirName)
 
 
-    # Defaulter list generation block
-    dSelection = input(("Do you need defaulter's list? "))
-    dSelection = dSelection.upper()
-    
-    if dSelection == "Y" or dSelection == "YES":
-        generateDefaulters(membersDF, intrestDF, dirName)
+    # print("\n## Maintenance letter for {} flat number generated. ## ", FlatNo)
+    # print("\n## Maintenance letter for {} member numbers generated. ## ",memberNo)
 
+    print("\nMaintenance demand letters generated in folder = {} ".format(dirName))
+    _ = input("## PRESS ENTER TO EXIT ##\n")
+
+
+    return
+
+
+
+
+def mainDefaulter(dataFileName,dirName):
+
+    # Replace all Non available values (nan) by 0
+    membersDF, intrestDF = getData(dataFileName)
+    membersDF = membersDF.replace(np.nan, 0)
+    intrestDF = intrestDF.replace(np.nan, 0)
+
+    # Defaulter list generation block
+    generateDefaulters(membersDF, intrestDF, dirName)
+
+    print("\nMaintenance defaulters's list generated in folder = {} ".format(dirName))
+    _ = input("## PRESS ENTER TO EXIT ##\n")
 
     return
 

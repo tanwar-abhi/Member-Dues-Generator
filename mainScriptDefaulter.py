@@ -16,22 +16,17 @@ import os
 # Module to get today's date
 from datetime import date
 
-# Library to run sys comands on terminal
-# import sys
-#import comptypes.client
 
 
 # The main code
 if __name__ == "__main__":
 
     # Path/FileName with extension. Here data file is excel member data
-    # dataFileName = "testFiles/Member_Outstanding_Manokamna_fty.xls"
     dataFileName = "Member_Outstanding_Manokamna.xls"
-
+    
     # template document file which is used as the base for demand letters
     templateFile = "TemplateMTC.docx"
 
-    FlatNo, memberNo, nextMC = Fn.getInputs()
 
     # Name of the output folder where all files would be saved
     folderName = "Maintenance_Demand_" + date.today().strftime("%m-%Y") + "/"
@@ -40,11 +35,5 @@ if __name__ == "__main__":
     if os.path.isdir(folderName) == False:
         os.mkdir(folderName)
 
-    Fn.main(dataFileName, FlatNo, memberNo, nextMC, templateFile, folderName)
+    Fn.mainDefaulter(dataFileName, folderName)
 
-
-
-    #Make folder to save and create pdf Files from Docx files
-    #os.mkdir(folderName + "pdfSS/")
-
-    #wdFormatPDF = 17
