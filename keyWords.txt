@@ -10,7 +10,7 @@ Date = {{Date}}
 Flat No = {{FlatNo}}
 Membership number = {{MemberNo}}
 
-Previous maintenance dues (Balance) = {{PMB}}  
+Previous maintenance dues (Balance) = {{PMB}}
 Previous maintenance Intrest = {{PMI}}
 Previous maintenance Total (Total Dues) = {{PMTD}}
 

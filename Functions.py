@@ -222,15 +222,17 @@ def generateDefaulters(membersDF, intrestDF, dirName):
 
     # Get date of dues calculation form excel file
     excelDate = str(defaulterDF["NAME"][0])
-    
+    excelDate = excelDate.split()
+
 
     # Remove all 0 dues values i.e. non defaulters from Data Frame
     index_names = defaulterDF[ defaulterDF['Maintenance Dues'] == 0 ].index
     defaulterDF.drop(index_names, inplace = True)
     defaulterDF.replace(0, np.nan, inplace = True)
-    
+
     # Adding final comment
-    defaulterDF.loc[len(defaulterDF)] = [" ", " NOTE: The dues calculation are till", excelDate]
+    defaulterDF.loc[len(defaulterDF)] = [" " for _ in defaulterDF.columns]
+    defaulterDF.loc[len(defaulterDF)] = ["##", " NOTE : The dues calculation are till ", excelDate[0], " ", " ", " ", " "]
 
     fileName = dirName + "Defaulters_List_" + date.today().strftime("%m-%Y") + ".xlsx"
     defaulterDF.to_excel(fileName, index = False)

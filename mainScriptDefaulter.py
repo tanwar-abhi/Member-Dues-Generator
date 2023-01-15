@@ -22,7 +22,7 @@ from datetime import date
 if __name__ == "__main__":
 
     # Path/FileName with extension. Here data file is excel member data
-    dataFileName = "Member_Outstanding_Manokamna.xls"
+    dataFileName = "memberDataFile.xls"
     
     # template document file which is used as the base for demand letters
     templateFile = "TemplateMTC.docx"
