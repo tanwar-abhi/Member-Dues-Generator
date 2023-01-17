@@ -41,6 +41,8 @@ if __name__ == "__main__":
 
     Fn.main(dataFileName, FlatNo, memberNo, nextMC, templateFile, folderName)
 
+    print("\nMaintenance demand letters generated in folder = {} ".format(folderName))
+    _ = input("## PRESS ENTER TO EXIT ##\n")
 
 
     #Make folder to save and create pdf Files from Docx files

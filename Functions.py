@@ -93,7 +93,6 @@ def getData(dataFile):
     for i in df.columns:
         if "MAINT" in i or "CONSTRUCT" in i:
             df[i].replace(" ", np.nan, inplace = True)
-            # df[i].replace(np.nan, 0, inplace = True)
 
 
 
@@ -116,7 +115,8 @@ def getData(dataFile):
             intDrop.append(i)
         else:
             if (type(df.loc[i,"FLATNO."]) == str):
-                df.loc[i,"FLATNO."] = df.loc[i,"FLATNO."][0] + df.loc[i,"FLATNO."][2:]
+                #df.loc[i,"FLATNO."] = df.loc[i,"FLATNO."][0] + df.loc[i,"FLATNO."][2:]
+                df.loc[i, "FLATNO."] = "".join(df.loc[i,"FLATNO."].split())
 
             memDrop.append(i)
 
@@ -224,7 +224,6 @@ def GenerateDocx(FlatNo, memberNo, nextMC, membersDF, intrestDF, templateFile, f
     if Data["FlatNo"] == 0:
         Data["FlatNo"] = "N/A"
 
-        
     doc = DocxTemplate(templateFile)
     doc.render(Data)
     
@@ -257,7 +256,6 @@ def generateDefaulters(membersDF, intrestDF, dirName):
     defaulterDF["Interest on Dues"] = intrestDF["Interest on Maintenance"].values
 
 
-
     #defaulterDF = defaulterDF.join(intrestDF["FlatNo.INT"])
     defaulterDF.rename(columns = {'FLATNO.':'Flat No.'}, inplace = True)
     defaulterDF.rename(columns = {'M.SHIPNO.':'Membership No.'}, inplace = True)
@@ -275,7 +273,7 @@ def generateDefaulters(membersDF, intrestDF, dirName):
 
     # Adding final comment
     defaulterDF.loc[len(defaulterDF)] = [" " for _ in defaulterDF.columns]
-    defaulterDF.loc[len(defaulterDF)] = ["##", " NOTE : The dues are calculated till ", excelDate[0], " ", " ", " ", " "]
+    defaulterDF.loc[len(defaulterDF)] = ["##", " NOTE : The dues are calculated till ", excelDate[0], excelDate[0], " ", " ", " "]
 
     fileName = dirName + "Defaulters_List_" + date.today().strftime("%m-%Y") + ".xlsx"
     defaulterDF.to_excel(fileName, index = False)
@@ -318,10 +316,6 @@ def main(dataFileName, FlatNo, memberNo, nextMC, templateFile, dirName):
 
     else:
         GenerateDocx(FlatNo, memberNo, nextMC, membersDF, intrestDF, templateFile, dirName)
-
-
-    print("\nMaintenance demand letters generated in folder = {} ".format(dirName))
-    _ = input("## PRESS ENTER TO EXIT ##\n")
 
 
     return
