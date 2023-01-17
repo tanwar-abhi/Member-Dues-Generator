@@ -88,6 +88,14 @@ def getData(dataFile):
     for i in range(0, len(df.columns)):
         #df = df.rename({df.columns[i]:df.columns[i].strip()}, axis=1)
         df = df.rename({df.columns[i]:"".join(df.columns[i].split()).upper()}, axis=1)
+    
+    # Remove any possible spaces from maintenance
+    for i in df.columns:
+        if "MAINT" in i or "CONSTRUCT" in i:
+            df[i].replace(" ", np.nan, inplace = True)
+            # df[i].replace(np.nan, 0, inplace = True)
+
+
 
     # seperating member(memDrop) and intrest(intDrop) index to seperate member data
     # and their payable intrest data.
@@ -125,7 +133,7 @@ def getData(dataFile):
     totalIntMaint = []
     for i, row in df_Member.iterrows():
         if i > 0 and row["NAME"] != 0 :
-            print(i, end=" ")
+            # print(i, end=" ")
             totalMaint.append(round(sum([row[j] for j in df_Member.columns if "MAINT" in j])))
         else:
             totalMaint.append(0)
