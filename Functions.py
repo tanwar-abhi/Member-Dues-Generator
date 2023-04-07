@@ -86,15 +86,15 @@ def getData(dataFile):
 
     # Remove all white spaces and extra spaces from data column names for efficient calls
     for i in range(0, len(df.columns)):
-        #df = df.rename({df.columns[i]:df.columns[i].strip()}, axis=1)
         df = df.rename({df.columns[i]:"".join(df.columns[i].split()).upper()}, axis=1)
-    
+
     # Remove any possible spaces from maintenance
     for i in df.columns:
         if "MAINT" in i or "CONSTRUCT" in i:
             df[i].replace(" ", np.nan, inplace = True)
 
 
+    df = df.replace(np.nan, 0)
 
     # seperating member(memDrop) and intrest(intDrop) index to seperate member data
     # and their payable intrest data.
@@ -115,38 +115,43 @@ def getData(dataFile):
             intDrop.append(i)
         else:
             if (type(df.loc[i,"FLATNO."]) == str):
-                #df.loc[i,"FLATNO."] = df.loc[i,"FLATNO."][0] + df.loc[i,"FLATNO."][2:]
                 df.loc[i, "FLATNO."] = "".join(df.loc[i,"FLATNO."].split())
 
             memDrop.append(i)
 
 
-    df = df.replace(np.nan, 0)
-
     df_Member = df.drop(labels = intDrop, axis=0)
     df_Intrest = df.drop(labels = memDrop, axis=0)
 
-    # df_Member = df_Member.replace(np.nan, 0)
-    # df_Intrest = df_Intrest.replace(np.nan, 0)
 
     totalMaint = []
     totalIntMaint = []
+    totalConstructionBal = []
+    interestConstruction = []
     for i, row in df_Member.iterrows():
         if i > 0 and row["NAME"] != 0 :
             # print(i, end=" ")
-            totalMaint.append(round(sum([row[j] for j in df_Member.columns if "MAINT" in j])))
+            totalMaint.append(round(sum([row[j] for j in df_Member.columns if "MAINT" and "CHARG" in j])))
+            totalConstructionBal.append(round(sum([row[j] for j in df_Member.columns if "COST" and "CONSTR" in j])))
         else:
             totalMaint.append(0)
+            totalConstructionBal.append(0)
 
 
     for i, row in df_Intrest.iterrows():
         if i > 0 and row["NAME"] != 0:
-            totalIntMaint.append(round(sum([row[j] for j in df_Intrest.columns if "MAINT" in j])))
+            totalIntMaint.append(round(sum([row[j] for j in df_Intrest.columns if "MAINT" and "CHARG" in j])))
+            interestConstruction.append(round(sum([row[j] for j in df_Intrest.columns if "COST" and "CONSTR" in j])))
         else:
             totalIntMaint.append(0)
+            interestConstruction.append(0)
+
 
     df_Member["Maintenance Dues"] = totalMaint
     df_Intrest["Interest on Maintenance"] = totalIntMaint
+    
+    df_Member["Construction Cost Due"] = totalConstructionBal
+    df_Intrest["Interest on Construction Cost"] = interestConstruction
 
     return df_Member, df_Intrest
 
@@ -170,32 +175,11 @@ def searchData(flatNo, memNumber,membersDF, intrestDF):
 
     # Chanaging key names to make easier for querry in document
     data = {"Name" : dictMember["NAME"], "FlatNo" : dictMember["FLATNO."],
-            "MemberNo" : int(dictMember["M.SHIPNO."])}
+            "MemberNo" : int(dictMember["M.SHIPNO."]),
+            "PMB" : dictMember["Maintenance Dues"], "PMI" : dictInterest["Interest on Maintenance"],
+            "CCB" : dictMember["Construction Cost Due"], "CCI" : dictInterest["Interest on Construction Cost"]}
 
 
-    #Get All maintainence balance and intrest on the maintainence
-    maintColName = [mc for mc in list(dictMember.keys()) if "MAINT" in mc]
-
-    # Calculate the maintenance balance for selected member
-    maintDue = [dictMember[maintColName[i]] for i in range(0,len(maintColName))]
-
-    # Calculate interest on maintenance balance for selected member
-    maintIntrest = [dictInterest[maintColName[i]] for i in range(0,len(maintColName))]
-
-    ConstCost = [x for x in list(dictMember.keys()) if "CONSTRUCT" in x]
-
-
-    # Adding total previous maintenance dues and interest to dictionary for querry
-    data["PMB"] = round(sum(maintDue))
-    data["PMI"] = round(sum(maintIntrest))
-
-    # Construciton cost and interest
-    if len(ConstCost) == 0:
-        data["CCB"] = 0
-        data["CCI"] = 0
-    else:
-        data["CCB"] = round(dictMember[ConstCost[0]])
-        data["CCI"] = round(dictInterest[ConstCost[0]])
 
     data["PMTD"] = data["PMB"] + data["PMI"]
     data["CCTD"] = data["CCB"] + data["CCI"]
@@ -224,6 +208,7 @@ def GenerateDocx(FlatNo, memberNo, nextMC, membersDF, intrestDF, templateFile, f
     if Data["FlatNo"] == 0:
         Data["FlatNo"] = "N/A"
 
+
     doc = DocxTemplate(templateFile)
     doc.render(Data)
     
@@ -240,8 +225,9 @@ def GenerateDocx(FlatNo, memberNo, nextMC, membersDF, intrestDF, templateFile, f
 
 
 # Generate defaulter's list in an excel file
-def generateDefaulters(membersDF, intrestDF, dirName):
+def generateDefaulters(membersDF, intrestDF, dirName, option):
 
+    option = int(option)
 
     zeroRows = [i for i in membersDF.index if membersDF.loc[i]["NAME"] == 0]
     membersDF.drop(zeroRows, inplace = True)
@@ -249,17 +235,29 @@ def generateDefaulters(membersDF, intrestDF, dirName):
     # Remove last row index
     zeroRows.remove(zeroRows[len(zeroRows)-1])
 
-    # zeroRows = [i for i in intrestDF.index if intrestDF.loc[i]["NAME"] == 0]
+    # Drop all rows from interest Data frame with no member names (unalloted)
     intrestDF.drop([i+1 for i in zeroRows], inplace = True)
 
-    defaulterDF = membersDF.filter(["SL.NO.","NAME", "M.SHIPNO.", "FLATNO.", "Maintenance Dues"], axis=1)
-    defaulterDF["Interest on Dues"] = intrestDF["Interest on Maintenance"].values
+
+    defaulterDF = membersDF.filter(["SL.NO.","NAME", "M.SHIPNO.", "FLATNO."], axis=1)
+    
+    if option == 1 or option == 3:
+        defaulterDF["Maintenance Dues"] = membersDF["Maintenance Dues"].values
+        defaulterDF["Interest on Maintenance Dues"] = intrestDF["Interest on Maintenance"].values
+        defaulterDF["Total Maintenance Dues"] = defaulterDF["Maintenance Dues"] + defaulterDF["Interest on Maintenance Dues"]
+    if option == 2 or option == 3:
+        defaulterDF["Construction Cost Due"] = membersDF["Construction Cost Due"].values
+        defaulterDF["Interest on Construction Cost"] = intrestDF["Interest on Construction Cost"].values
+        defaulterDF["Total Construction Const Due"] = defaulterDF["Construction Cost Due"] + defaulterDF["Interest on Construction Cost"]
+    if option == 3:
+        defaulterDF["Total Due"] = defaulterDF["Total Maintenance Dues"] + defaulterDF["Total Construction Const Due"]
 
 
     #defaulterDF = defaulterDF.join(intrestDF["FlatNo.INT"])
     defaulterDF.rename(columns = {'FLATNO.':'Flat No.'}, inplace = True)
     defaulterDF.rename(columns = {'M.SHIPNO.':'Membership No.'}, inplace = True)
-    defaulterDF["Total Maintenance Dues"] = defaulterDF["Maintenance Dues"] + defaulterDF["Interest on Dues"]
+
+
 
     # Get date of dues calculation form excel file
     excelDate = str(defaulterDF["NAME"][0])
@@ -267,15 +265,38 @@ def generateDefaulters(membersDF, intrestDF, dirName):
 
 
     # Remove all 0 dues values i.e. non defaulters from Data Frame
-    index_names = defaulterDF[ defaulterDF['Maintenance Dues'] == 0 ].index
-    defaulterDF.drop(index_names, inplace = True)
-    defaulterDF.replace(0, np.nan, inplace = True)
+    if option == 1 or option == 3:
+        noMaintDues_index= defaulterDF[ defaulterDF['Maintenance Dues'] == 0 ].index
+    if option == 2 or option == 3:
+        noConstDues_index = defaulterDF[ defaulterDF['Construction Cost Due'] == 0 ].index
 
-    # Adding final comment
-    defaulterDF.loc[len(defaulterDF)] = [" " for _ in defaulterDF.columns]
-    defaulterDF.loc[len(defaulterDF)] = ["##", " NOTE : The dues are calculated till ", excelDate[0], excelDate[0], " ", " ", " "]
+    if option == 1:
+        index_toDrop = [i for i in noMaintDues_index]
+    elif option == 2:
+        index_toDrop = [i for i in noConstDues_index ]
+    else:
+        index_toDrop = [i for i in noMaintDues_index if i in noConstDues_index ]
 
-    fileName = dirName + "Defaulters_List_" + date.today().strftime("%m-%Y") + ".xlsx"
+    # defaulterDF.drop(index_toDrop, inplace = True)
+    defaulterDF.drop(index_toDrop, axis='index', inplace = True)
+    defaulterDF["Membership No."].replace(0, np.nan, inplace = True)
+    defaulterDF["Flat No."].replace(0, np.nan, inplace = True)
+
+    # Adding space before final comment
+    defaulterDF = defaulterDF.append(pd.Series([np.nan for _ in defaulterDF.columns], index=defaulterDF.columns), ignore_index=True)
+
+
+    if option == 1:
+        defaulterDF.loc[len(defaulterDF)] = ["##", " NOTE : The dues are calculated till ", excelDate[0], excelDate[0], " ", "##", " "]
+        fileName = dirName + "Maintenance_Defaulters_List_" + date.today().strftime("%m-%Y") + ".xlsx"
+    elif option == 2:
+        defaulterDF.loc[len(defaulterDF)] = ["##", " NOTE : The dues are calculated till ", excelDate[0], excelDate[0], " ", "##", " "]
+        fileName = dirName + "Construction_Cost_Defaulters_List_" + date.today().strftime("%m-%Y") + ".xlsx"
+    else:
+        defaulterDF.loc[len(defaulterDF)] = ["##", " NOTE : The dues are calculated till ", excelDate[0], excelDate[0], " ", "##", " ", " ", " "," ", " "]
+        fileName = dirName + "Defaulters_List_" + date.today().strftime("%m-%Y") + ".xlsx"
+
+    # Export all data to excel file
     defaulterDF.to_excel(fileName, index = False)
 
     return
@@ -328,9 +349,22 @@ def mainDefaulter(dataFileName,dirName):
     # Replace all Non available values (nan) by 0
     membersDF, intrestDF = getData(dataFileName)
 
+    print("Please select tpye of defaulter List :: \n")
+    print("[1] = Only Maintenance Dues Defaulters")
+    print("[2] = Only Construction cost Defaulters")
+    print("[3] = Both Construction and Maintenance Dues Defaulter\n")
+    option = input("Type index of desired defaulter list then press ENTER = ")
+
+    while(option.isnumeric() == False):
+        print("\n## INVALID SELECTION ## please select again ##\n")
+        option = input("Type index of desired defaulter list then press ENTER = ")
+
+    while(int(option) > 4 or int(option) < 1 ):
+        print("\n## INVALID SELECTION ## please select again ##\n")
+        option = input("Type index of desired defaulter list then press ENTER = ")
 
     # Defaulter list generation block
-    generateDefaulters(membersDF, intrestDF, dirName)
+    generateDefaulters(membersDF, intrestDF, dirName, option)
 
     print("\nMaintenance defaulters's list generated in folder = {} ".format(dirName))
     _ = input("## PRESS ENTER TO EXIT ##\n")
