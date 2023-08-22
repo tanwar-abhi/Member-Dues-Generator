@@ -13,3 +13,5 @@ def index():
 
     if request.method == "POST":
         return render_template("dataCheck.html", FlatNo=request.form.get("FlatNo"))
+
+

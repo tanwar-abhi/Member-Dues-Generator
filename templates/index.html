@@ -2,18 +2,32 @@
 
 {% block body %}
     <h1 class="heading1">Name of Appartment CGHS Pvt. Ltd</h1>
-    <h2 class="heading2">Quaterly Maintenance Generation Request Form</h2>
+    <h2 class="heading2">Maintenance Generation Request Form</h2>
+
+
+    <div class="jumbotron">
+        Please input member's data file in xls, MS-excell foramat.
+    </div>
+
+
+
     <form action="/" method="post">
-        <br>Please fill the following getails to generate the Quaterly Maintenance demand for the members:<br>
+        <br>Please fill the following details to generate the Quaterly Maintenance demand for the members:<br>
 
         <br>Month From
         <!-- <input name="month1" type="date" autocomplete="off" min="1" max="12" placeholder="Starting Month"> -->
         <input name="month1" type="date" autocomplete="off">
         to
         <input name="month1" type="date" autocomplete="off" placeholder="Ending Month">
-    <br><br>
+
+        <br><br>
+        <!-- type="file" creates a file-selection field and "Browser" button for upload -->
+        <input type="file" id="myFile" name="fileName">
+        <!-- <input type="submit"> -->
+        <br><br>
         <input name="FlatNo" type="text" autocomplete="off" autofocus placeholder="Flat Number">
-    </br>
+        </br><br>
         <input type="submit">
     </form>
 {% endblock %}
+
