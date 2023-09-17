@@ -34,7 +34,7 @@ def getInputs():
     NextMC : Maintenance Cost for the next period
     '''
    
-    if len(sys.argv) == 3:
+    if len(sys.argv) == 4:
         flatNo = sys.argv[1]
         membershipNo = sys.argv[2]
         NextMC = sys.argv[3]
@@ -51,7 +51,7 @@ def getInputs():
 
     while(NextMC.isnumeric() == False):
         NextMC = input("Next Maintenance Charges = ")
-    
+
     # Convert user input to uppercase to remove user input discrepancy
     flatNo = flatNo.upper()
     # membershipNo = membershipNo.upper() // DON'T ADD THIS LINE here
@@ -80,8 +80,7 @@ def getData(dataFile):
     df_Intrest : DataFrame of Intrest for each member
     '''
 
-    # read an excel file and convert
-    # into a dataframe object
+    # read an excel file and convert into a dataframe object
     df = pd.DataFrame(pd.read_excel(dataFile))
 
     # Remove all white spaces and extra spaces from data column names for efficient calls
@@ -240,7 +239,7 @@ def generateDefaulters(membersDF, intrestDF, dirName, option):
 
 
     defaulterDF = membersDF.filter(["SL.NO.","NAME", "M.SHIPNO.", "FLATNO."], axis=1)
-    
+
     if option == 1 or option == 3:
         defaulterDF["Maintenance Dues"] = membersDF["Maintenance Dues"].values
         defaulterDF["Interest on Maintenance Dues"] = intrestDF["Interest on Maintenance"].values

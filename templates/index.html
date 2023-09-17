@@ -6,28 +6,38 @@
 
 
     <div class="jumbotron">
-        Please input member's data file in xls, MS-excell foramat.
     </div>
 
 
 
     <form action="/" method="post">
-        <br>Please fill the following details to generate the Quaterly Maintenance demand for the members:<br>
+        <div class="bodyTextMargin">
 
-        <br>Month From
-        <!-- <input name="month1" type="date" autocomplete="off" min="1" max="12" placeholder="Starting Month"> -->
-        <input name="month1" type="date" autocomplete="off">
-        to
-        <input name="month1" type="date" autocomplete="off" placeholder="Ending Month">
+            Please input member's data file in xls or MS-excell foramat. To read data from the file.
+            <br><br>
+            <!-- type="file" creates a file-selection field and "Browser" button for upload -->
+            <input type="file" id="myFile" name="fileName">
+            <!-- <input type="submit"> -->
+            </br><br>
+            <button type="submit">Upload</button>
 
-        <br><br>
-        <!-- type="file" creates a file-selection field and "Browser" button for upload -->
-        <input type="file" id="myFile" name="fileName">
-        <!-- <input type="submit"> -->
-        <br><br>
-        <input name="FlatNo" type="text" autocomplete="off" autofocus placeholder="Flat Number">
-        </br><br>
-        <input type="submit">
+            <div>
+                <br>Please fill the following details to generate the Quaterly Maintenance demand for the members:<br>
+
+                <br>Month From
+                <!-- <input name="month1" type="date" autocomplete="off" min="1" max="12" placeholder="Starting Month"> -->
+                <input name="month1" type="date" autocomplete="off">
+                to
+                <input name="month1" type="date" autocomplete="off" placeholder="Ending Month">
+    
+                <br><br>
+                <input name="FlatNo" type="text" autocomplete="off" autofocus placeholder="Flat Number">
+                </br><br>
+                <input type="submit">
+            </div>
+
+        </div>
+
     </form>
 {% endblock %}
 
