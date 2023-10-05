@@ -63,6 +63,14 @@ def getInputs():
 
 
 
+def validateInputData(flatNo, memberNo):
+    
+
+    return True
+
+
+
+
 
 
 def getData(dataFile):

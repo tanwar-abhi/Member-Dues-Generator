@@ -1,40 +1,23 @@
 {% extends "layout.html" %}
 
 {% block body %}
-    <h1 class="heading1">Name of Appartment CGHS Pvt. Ltd</h1>
-    <h2 class="heading2">Maintenance Generation Request Form</h2>
-
-
-    <div class="jumbotron">
-    </div>
-
-
 
     <form action="/" method="post">
-        <div class="bodyTextMargin">
+        <div class="container">
 
-            Please input member's data file in xls or MS-excell foramat. To read data from the file.
+            Please input member's data file in xls (MS-excel) foramat. To read data from the file.
             <br><br>
             <!-- type="file" creates a file-selection field and "Browser" button for upload -->
             <input type="file" id="myFile" name="fileName">
+            <!-- <p>
+                <label for="MembersData">members Data File</label>
+                <input multiple id="memberData" name="memberDataFile" type="file">
+            </p> -->
+
+
             <!-- <input type="submit"> -->
             </br><br>
             <button type="submit">Upload</button>
-
-            <div>
-                <br>Please fill the following details to generate the Quaterly Maintenance demand for the members:<br>
-
-                <br>Month From
-                <!-- <input name="month1" type="date" autocomplete="off" min="1" max="12" placeholder="Starting Month"> -->
-                <input name="month1" type="date" autocomplete="off">
-                to
-                <input name="month1" type="date" autocomplete="off" placeholder="Ending Month">
-    
-                <br><br>
-                <input name="FlatNo" type="text" autocomplete="off" autofocus placeholder="Flat Number">
-                </br><br>
-                <input type="submit">
-            </div>
 
         </div>
 
