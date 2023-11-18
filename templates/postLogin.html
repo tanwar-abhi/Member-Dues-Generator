@@ -1,0 +1,14 @@
+
+{% extends "layout.html" %}
+
+
+{% block body %}
+
+	You are logged in as {{ userName }}.
+	<br>
+	<form action="/query" method="get">
+		<button type="submit" value="newQuery">Individual Query</button>
+		<button type="submit" value="defaulter">Defaulters</button>
+	</form>
+
+{% endblock %}

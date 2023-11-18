@@ -1,12 +1,38 @@
 {% extends "layout.html" %}
 
-{% body block %}
+{% block body %}
 
-	<form action="/" method="post">
-		<div class="container">
-			Welcome! Please enter credentials to login
-			<button type="submit">Login</button>
-		</div>
-	</form>
+	<div class="login-form-left">
+		<form action="/postlogin" method="post">
+			<!-- <div class="container"> -->
+			<div>
+				Welcome! Please enter credentials to login
+				<br>
+				Login ID <input autocomplete="off" autofocus name="userName" placeholder="User Name / Login id" type="text" required>
+				<br>
+				Password <input autocomplete="off" autofocus name="password" placeholder="Your Password" type="password" required>
+				<br><br>
+				<div>
+					<button type="submit">Login</button>
+				</div>
+				<span class="psw">Forgot <a href="/resetpwd">password?</a></span>
+			</div>
+		</form>
+	</div>
 
+
+
+	<div class="login-form-register">
+		</form action="/register" method="post">
+			<div>
+				<!-- <div class="hide-md-lg">
+					<p>Or sign in manually:</p>
+				</div> -->
+				First time user
+				<button type="submit" value="Regi"> Register NW</button>
+			</div>
+		</form>
+	</div>
 {% endblock %}
+
+
