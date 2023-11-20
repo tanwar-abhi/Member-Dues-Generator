@@ -2,35 +2,40 @@
 
 {% block body %}
 
-	<!-- <div class="login-form-left"> -->
-	<div>
+	<div class="login-form-left">
+	<!-- <div> -->
 		<form action="/login" method="post">
 			<div>
 			<!-- <div class="contianer"> -->
-				Welcome! Please enter credentials to login
+				Welcome! <br>Please enter credentials to login
+				<br><br>
+				<input autocomplete="off" autofocus name="userName" placeholder="User Name / Login id" type="text" required>
 				<br>
-				Login ID <input autocomplete="off" autofocus name="userName" placeholder="User Name / Login id" type="text" required>
-				<br>
-				Password <input autocomplete="off" autofocus name="password" placeholder="Your Password" type="password" required>
+				<input autocomplete="off" name="password" placeholder="Your Password" type="password" required>
 				<br><br>
 				<div>
 					<button type="submit">Login</button>
+					<!-- <span class="psw">Forgot <a href="/resetpwd">password?</a></span> -->
+					<br>
+					<a href="/resetpwd"> Forgot password? </a>
 				</div>
-				<span class="psw">Forgot <a href="/resetpwd">password?</a></span>
 			</div>
 		</form>
 	</div>
 
+	<div class="vl"></div>
+	<div class="vl-innertext">OR</div>
 
 
-	<div class="login-form-register">
-		</form action="/register" method="post">
+	<div class="form-register">
+		</form action="/register" method="get">
 			<div>
 				<!-- <div class="hide-md-lg">
 					<p>Or sign in manually:</p>
 				</div> -->
-				First time user
-				<button type="submit" value="Regi"> Register NW</button>
+				First time user<br>
+				Creat a new account.<br><br>
+				<button type="submit" value="Regi"> Register</button>
 			</div>
 		</form>
 	</div>

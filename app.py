@@ -13,8 +13,8 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-
-
+# Running app in debug mode
+# app.run(debug=True)
 
 @app.route("/")
 def index():
@@ -79,11 +79,11 @@ def getQueryInputs():
 
 
     if request.method == "GET":
-        if request.args.get("queryButton") == "logout":
+        if request.args.get("selection") == "logout":
             session["name"] = None
             return redirect("/")
 
-        elif request.args.get("queryButton") == "defaulter":
+        elif request.args.get("selection") == "defaulter":
             return render_template("defaulterQuery.html")
 
     return render_template("queryData.html")

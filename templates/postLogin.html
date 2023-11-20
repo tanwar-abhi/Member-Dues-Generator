@@ -5,15 +5,15 @@
 {% block body %}
 	<script type="text/javascript" src="static/myFunctions.js"> </script>
 
-	You are logged in as {{ userName }}.
-	<br>
-	<div>
+	<div class="container">
+		Hello! {{ userName }}<br>
+		You are logged in with user name = <bold>{{ userName }}</bold>.
+		<br>
+
 		<form action="/query" method="get">
-
-			<button type="submit" name="queryButton" value="newQuery">Individual Query</button>
-			<button type="submit" name="queryButton" value="defaulter">Defaulters</button>
-			<button type="submit" name="queryButton" value="logout">Logout</button>
-
+			<button type="submit" name="selection" value="newQuery">Individual Query</button>
+			<button type="submit" name="selection" value="defaulter">Defaulters</button>
+			<button type="submit" name="selection" value="logout">Logout</button>
 		</form>
 	</div>
 
