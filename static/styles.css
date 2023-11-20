@@ -33,6 +33,7 @@ body {
     margin-left: 15px;
 }
 
+
 .container {
     margin-left: auto;
     margin-right: auto;
@@ -41,6 +42,70 @@ body {
     text-align: center;
     width: 90%;
 }
+
+/* Two-column layout */
+.col {
+    float: left;
+    width: 50%;
+    margin: auto;
+    padding: 0 50px;
+    margin-top: 6px;
+}
+
+/* vertical line */
+.vl {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+    border: 2px solid #ddd;
+    height: 175px;
+}
+
+/* text inside the vertical line */
+.vl-innertext {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    padding: 8px 10px;
+}
+
+
+/* hide some text on medium and large screens */
+.hide-md-lg {
+    display: none;
+}
+
+
+.login-form-left{
+    float: left;
+    text-align: center;
+    margin-left: 20px;
+    margin-top: 20px;
+    /* margin-left: 50px; */
+    /* background-color: #dd4b39 */
+}
+
+.login-form-register{
+    float: right;
+    /* display: inline-block; */
+    margin: auto;
+    width: 50%;
+    text-align: center;
+    /* background-color: #04AA6D */
+}
+
+
+/* style the submit button */
+input[type=submit] {
+    /* background-color: #04AA6D; */
+    background-color: #3B5998;
+    color: white;
+    cursor: pointer;
+}
+
 
 .jumbotron {
     background-color: #477bff;

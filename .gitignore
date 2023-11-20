@@ -133,3 +133,5 @@ dmypy.json
 *.csv
 *.db
 
+# Ignore flask sessions
+flask_session/

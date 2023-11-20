@@ -3,12 +3,18 @@
 
 
 {% block body %}
+	<script type="text/javascript" src="static/myFunctions.js"> </script>
 
 	You are logged in as {{ userName }}.
 	<br>
-	<form action="/query" method="get">
-		<button type="submit" value="newQuery">Individual Query</button>
-		<button type="submit" value="defaulter">Defaulters</button>
-	</form>
+	<div>
+		<form action="/query" method="get">
+
+			<button type="submit" name="queryButton" value="newQuery">Individual Query</button>
+			<button type="submit" name="queryButton" value="defaulter">Defaulters</button>
+			<button type="submit" name="queryButton" value="logout">Logout</button>
+
+		</form>
+	</div>
 
 {% endblock %}

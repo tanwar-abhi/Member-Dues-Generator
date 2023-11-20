@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_session import Session
-import Functions as fn
+import src.Functions as fn
 import os, sqlite3
 
 # Run the web application (flask)
@@ -20,7 +20,7 @@ Session(app)
 def index():
     if not session.get("name"):
         return redirect ("/login")
-    return render_template("postLogin.html")
+    return render_template("postLogin.html", userName=session["name"])
 
 
 
@@ -63,13 +63,29 @@ def login():
 
 
 
-@app.route("/query", methods=["POST"])
+@app.route("/query", methods=["GET","POST"])
 def getQueryInputs():
-    flatNo = request.form.get("FlatNo")
-    memberNumber = request.form.get("MemberNumber")
 
-    # membersDF, intrestDF = fn.getData(dataFileName)
+    # if request.method == "POST":
+    #     # if request.form["queryType"] == "newQuery":
+    #     if "newQuery" in request.form:
+    #         flatNo = request.form.get("FlatNo")
 
-    return render_template("queryData.html", FlatNo=request.form.get("FlatNo"))
+    #         if not flatNo:
+    #             memberNumber = request.form.get("MemberNumber")
+
+    #         # membersDF, intrestDF = fn.getData(dataFileName)
+    #         return render_template("queryData.html", FlatNo=request.form.get("FlatNo"))
+
+
+    if request.method == "GET":
+        if request.args.get("queryButton") == "logout":
+            session["name"] = None
+            return redirect("/")
+
+        elif request.args.get("queryButton") == "defaulter":
+            return render_template("defaulterQuery.html")
+
+    return render_template("queryData.html")
 
 
