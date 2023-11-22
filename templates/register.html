@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+	<h3 class="heading2">New User Registration</h3>
+	<form action="/register" method="post">
+		Name :<input autocomplete="off" autofocus name="uName" placeholder="Your Name" type="text">
+		<br><br>
+		email :<input autocomplete="off" name="userEmail" placeholder="email" type="text">
+		<br><br>
+		Password:<input autocomplete="off" name="userPwd" placeholder="Password" type="text">
+		<br><br>
+		<!-- <input autocomplete="off" name="" -->
+		<button type="submit">Register</button>
+	</form>
+
+
+
+{% endblock %}

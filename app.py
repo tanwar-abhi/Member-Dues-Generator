@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_session import Session
 import src.Functions as fn
-import os, sqlite3
+# import os, sqlite3
 
 # Run the web application (flask)
 app = Flask(__name__)
@@ -58,6 +58,23 @@ def login():
 #     return render_template("login.html")
 #     # return render_template("index.html")
 # 
+
+
+@app.route("/register", methods=["GET","POST"])
+def register():
+    if request.method == "POST":
+        userName = request.form.get("uName")
+        email = request.form.get("userEmail")
+        pwd = request.form.get("userPwd")
+
+
+
+
+
+
+
+
+
 
 
 

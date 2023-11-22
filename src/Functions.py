@@ -19,6 +19,33 @@ from datetime import date
 # Create template from docx file to efficienty edit
 from docxtpl import DocxTemplate
 
+import os, sqlite3
+
+
+
+
+
+def userDetailsNotInDB(dbName, userName, userEmail):
+    print("## PWD in functions = ", os.getcwd())
+    connect = sqlite3.connect(dbName)
+    txn = connect.cursor()
+    print("Connected to SQL Database")
+
+    sqlQuery = """SELECT * FROM appUsers WHERE name=?"""
+    queryResult = txn.execute(sqlQuery, (name,))
+    print("Total rows are = ", len(queryResult))
+    for row in queryResult:
+        print("id = ", row[0])
+        print("name = ", row[1])
+        print("email = ", row[2])
+        print("pwd = ", row[3])
+        print("\n")
+
+    return True
+
+
+
+
 
 
 
