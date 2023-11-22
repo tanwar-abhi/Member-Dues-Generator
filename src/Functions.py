@@ -25,21 +25,35 @@ import os, sqlite3
 
 
 
-def userDetailsNotInDB(dbName, userName, userEmail):
-    print("## PWD in functions = ", os.getcwd())
-    connect = sqlite3.connect(dbName)
+def userDetailsInDB(dbFileName, userName, userEmail, querySender="login", userPwd=""):
+
+    connect = sqlite3.connect(dbFileName)
     txn = connect.cursor()
     print("Connected to SQL Database")
 
     sqlQuery = """SELECT * FROM appUsers WHERE name=?"""
-    queryResult = txn.execute(sqlQuery, (name,))
-    print("Total rows are = ", len(queryResult))
-    for row in queryResult:
-        print("id = ", row[0])
-        print("name = ", row[1])
-        print("email = ", row[2])
-        print("pwd = ", row[3])
-        print("\n")
+    txn.execute(sqlQuery, (userName,))
+
+    # Return data as a list of tuple i.e. <list(tuple)>
+    data = txn.fetchall()
+
+    if len(data) == 0:
+        return False
+    else:
+        # Checking email
+        sqlQuery = """SELECT * FROM appUsers WHERE email=?"""
+        txn.execute(sqlQuery, (userEmail,))
+        data = txn.fetchall()
+        if len(data) == 0:
+            return False
+        
+        if querySender == "login":
+            # Checking password
+            sqlQuery = """SELECT * FROM appUsers WHERE password=?"""
+            txn.execute(sqlQuery, (userPwd,))
+            data = txn.fetchall()
+            if len(data) == 0:
+                return False
 
     return True
 

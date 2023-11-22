@@ -14,9 +14,11 @@ if __name__ == "__main__":
     print("## DBfile path = ", dbFile)
 
 
-    reply = fn.userDetailsNotInDB(dbFile, "Orey", "orey@kya.com")
-    print("Value in reply = ", reply)
+    reply = fn.userDetailsInDB(dbFile, "Oey", "orey@kya.com", "register")
+    print("Value in register reply = ", reply)
 
-    print("Main test file")
+    reply = fn.userDetailsInDB(dbFile, "Orey", "orey@kya.com", "login", "chjore")
+    print("Value in login reply = ", reply)
+
 
 

@@ -67,10 +67,7 @@ def register():
         email = request.form.get("userEmail")
         pwd = request.form.get("userPwd")
 
-
-
-
-
+    return render_template("register.html")
 
 
 

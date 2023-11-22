@@ -45,6 +45,12 @@ body {
     width: 90%;
 }
 
+.fieldset { 
+    overflow: hidden; 
+    margin-bottom: 5px;
+    display: inline-block;
+    width: 270px;
+}
 
 .alert {
     padding: 10px;
@@ -100,9 +106,9 @@ body {
 
 
 /* style the submit button */
-input[type=submit] {
+/* input[type=submit] { */
+.login-btns{
     background-color: #04AA6D;
-    /* background-color: #3B5998; */
     color: white;
     cursor: pointer;
     vertical-align: middle;
