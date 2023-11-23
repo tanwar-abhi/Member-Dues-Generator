@@ -3,17 +3,20 @@
 
 
 {% block body %}
-	<script type="text/javascript" src="static/myFunctions.js"> </script>
+
+	{% block script %}
+		<script type="text/javascript" src="static/myFunctions.js"> </script>
+	{% endblock %}
 
 	<div class="container">
 		Hello! {{ userName }}<br>
-		You are logged in with user name = <bold>{{ userName }}</bold>.
-		<br>
+		You are logged in with user name as <strong><em>{{ userName }}</em></strong>.
+		<br><br>
 
 		<form action="/query" method="get">
-			<button type="submit" name="selection" value="newQuery">Individual Query</button>
-			<button type="submit" name="selection" value="defaulter">Defaulters</button>
-			<button type="submit" name="selection" value="logout">Logout</button>
+			<button class="login-btns" type="submit" name="selection" value="newQuery">Individual Query</button>
+			<button class="register-btns" type="submit" name="selection" value="defaulter">Defaulters</button>
+			<button class="logout-btns" type="submit" name="selection" value="logout">Logout</button>
 		</form>
 	</div>
 

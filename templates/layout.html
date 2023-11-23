@@ -3,7 +3,9 @@
 <html lang="en">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+
         <!-- Link the css stylesheet defined in static folder -->
         <link href="static/styles.css" rel="stylesheet">
         <title>Maintenance Request Generator</title>
@@ -16,6 +18,10 @@
 
         <!-- <div class="jumbotron"></div> -->
         {% block body %}
+            {% block logout %}
+            {% endblock %}
+            {% block script %}
+            {% endblock %}
         {% endblock %}
     </body>
 </html>

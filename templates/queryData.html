@@ -1,25 +1,34 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<form action="/query" method="post">
-    <div class="container">
-        <br>Please fill the following details to generate the Quaterly Maintenance demand for the members:<br>
-    
-        <br>Month From
-        <!-- <input name="month1" type="date" autocomplete="off" min="1" max="12" placeholder="Starting Month"> -->
-        <input name="month1" type="date" autocomplete="off" required>
-        to
-        <input name="month1" type="date" autocomplete="off" placeholder="Ending Month" required>
-    
-        <br><br>
-        <input name="FlatNo" type="text" autocomplete="off"  autofocus placeholder="Flat Number">
-        </br><br>
-        <br><br>
-        <input name="membershipNo" type="text" autocomplete="off"  autofocus placeholder="Membership Number">
-        </br><br>
-        <button type="submit">Generate Demand</button>
-    </div>
 
-</form>
+    {% block logout %}
+        <form align="right" name="form1" method="post" action="/logout">
+            <label>
+                <input class="logout-btns" name="userLogout" type="submit" id="button-logout" value="log out">
+            </label>
+        </form>
+    {% endblock %}
+
+
+    <form action="/query" method="post">
+        <div class="container">
+            <br>Please fill the following details to generate the Quaterly Maintenance demand for the members:<br>
+    
+            <br>Month From
+            <!-- <input name="month1" type="date" autocomplete="off" min="1" max="12" placeholder="Starting Month"> -->
+            <input name="month1" type="date" autocomplete="off" required>
+            to
+            <input name="month1" type="date" autocomplete="off" placeholder="Ending Month" required>
+    
+            <br><br>
+            <input name="FlatNo" type="text" autocomplete="off"  autofocus placeholder="Flat Number">
+            </br><br>
+            <br><br>
+            <input name="membershipNo" type="text" autocomplete="off"  autofocus placeholder="Membership Number">
+            </br><br>
+            <button type="submit">Generate Demand</button>
+        </div>
+    </form>
 
 {% endblock %}

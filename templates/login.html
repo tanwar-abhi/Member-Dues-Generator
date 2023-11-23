@@ -6,19 +6,22 @@
 	<!-- <div> -->
 		<form action="/login" method="post">
 			<div>
+				<p>
 			<!-- <div class="contianer"> -->
 				Welcome! <br>Please enter credentials to login
+				</p>
 				<br><br>
 				<input autocomplete="off" autofocus name="userName" placeholder="User Name / Login id" type="text" required>
 				<br>
 				<input autocomplete="off" name="password" placeholder="Your Password" type="password" required>
-				<br><br>
+				<br>
 				<div>
-					<button type="submit">Login</button>
+					<button class="login-btns" type="submit">Login</button>
 					<!-- <span class="psw">Forgot <a href="/resetpwd">password?</a></span> -->
 					<br>
 					<a href="/resetpwd"> Forgot password? </a>
 				</div>
+
 			</div>
 		</form>
 	</div>
@@ -32,7 +35,7 @@
 			<div>
 				First time user<br>
 				Creat a new account.<br><br>
-				<button type="submit" name="newAccount" value="register"> New Account</button>
+				<button class="register-btns" type="submit" name="newAccount" value="register"> New Account</button>
 			</div>
 		</form>
 	</div>

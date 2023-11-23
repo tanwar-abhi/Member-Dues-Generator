@@ -50,13 +50,24 @@ body {
     margin-bottom: 5px;
     display: inline-block;
     width: 270px;
+    padding-bottom: 10px;
+    padding-top: 10px;
 }
+
+
+.logout-btn {
+    position:fixed;
+    right:10px;
+    top:5px;
+}
+
+
 
 .alert {
     padding: 10px;
     background-color: #f44336;
     color: white;
-  }
+}
 
 
 /* vertical line */
@@ -95,6 +106,9 @@ body {
     margin: 0px 10px 50px 300px;
 }
 
+/* .text-def-size{
+    font-size: 25px;
+} */
 
 .form-register{
     /* border: 2px solid black; */
@@ -107,14 +121,38 @@ body {
 
 /* style the submit button */
 /* input[type=submit] { */
-.login-btns{
+.register-btns{
     background-color: #04AA6D;
     color: white;
     cursor: pointer;
     vertical-align: middle;
     text-align: center;
     padding: 08px 12px;
-    border-radius: 5px;
+    border-radius: 10px;
+    font-size: 17px;
+}
+
+
+.login-btns{
+    background-color:blueviolet;
+    color: white;
+    cursor: pointer;
+    vertical-align: middle;
+    text-align: center;
+    padding: 08px 12px;
+    border-radius: 10px;
+    font-size: 17px;
+}
+
+
+.logout-btns{
+    background-color: red;
+    color: white;
+    cursor: pointer;
+    vertical-align: middle;
+    text-align: center;
+    padding: 08px 12px;
+    border-radius: 10px;
     font-size: 17px;
 }
 

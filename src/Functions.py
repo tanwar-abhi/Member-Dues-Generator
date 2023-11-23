@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 
 # Sytem, os and shutil module to run system commands and create new, copy, remove files
-import sys
+import sys, sqlite3
 
 # Module to get today's date
 from datetime import date
@@ -19,13 +19,12 @@ from datetime import date
 # Create template from docx file to efficienty edit
 from docxtpl import DocxTemplate
 
-import os, sqlite3
-
-
 
 
 
 def userDetailsInDB(dbFileName, userName, userEmail, querySender="login", userPwd=""):
+
+    userEmail = userEmail.upper()
 
     connect = sqlite3.connect(dbFileName)
     txn = connect.cursor()
@@ -37,27 +36,21 @@ def userDetailsInDB(dbFileName, userName, userEmail, querySender="login", userPw
     # Return data as a list of tuple i.e. <list(tuple)>
     data = txn.fetchall()
 
+    result = True
+
     if len(data) == 0:
         return False
+    elif len(data) > 1:
+        raise Exception("Database has multiple entries for user = " + userName)
     else:
-        # Checking email
-        sqlQuery = """SELECT * FROM appUsers WHERE email=?"""
-        txn.execute(sqlQuery, (userEmail,))
-        data = txn.fetchall()
-        if len(data) == 0:
-            return False
-        
-        if querySender == "login":
-            # Checking password
-            sqlQuery = """SELECT * FROM appUsers WHERE password=?"""
-            txn.execute(sqlQuery, (userPwd,))
-            data = txn.fetchall()
-            if len(data) == 0:
-                return False
+        for row in data:
+            if row[2].upper() != userEmail:
+                result = False
+            elif querySender == "login":
+                if row[3].upper() != userPwd:
+                    result = False
 
-    return True
-
-
+    return result
 
 
 
@@ -103,11 +96,6 @@ def getInputs():
     return flatNo, membershipNo, NextMC
 
 
-
-def validateInputData(flatNo, memberNo):
-    
-
-    return True
 
 
 

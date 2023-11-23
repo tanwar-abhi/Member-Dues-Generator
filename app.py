@@ -72,6 +72,10 @@ def register():
 
 
 
+@app.route("/logout", methods=["GET", "POST"])
+def logout():
+    session["name"] = None
+    return redirect("/")
 
 
 
@@ -94,8 +98,7 @@ def getQueryInputs():
 
     if request.method == "GET":
         if request.args.get("selection") == "logout":
-            session["name"] = None
-            return redirect("/")
+            return redirect("/logout")
 
         elif request.args.get("selection") == "defaulter":
             return render_template("defaulterQuery.html")
