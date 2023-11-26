@@ -161,7 +161,7 @@ body {
     background-color: #477bff;
     color: #fff;
     margin-bottom: 1rem;
-    padding: 2rem 1rem;
+    padding: 1rem 1rem;
     text-align: center;
 }
 
@@ -175,4 +175,30 @@ body {
 .section:hover {
     background-color: #f5f5f5;
     transition: color 2s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+/* 
+.footer {
+    position: fixed;
+    left: 10px;
+    bottom: 5px;
+    right: 10px;
+    top:15px;
+    width: 95%;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-color: gray;
+    color: white;
+    text-align: center;
+} */
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-color: grey;
+    color: white;
+    text-align: center;
 }

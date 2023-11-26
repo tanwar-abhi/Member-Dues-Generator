@@ -38,7 +38,6 @@ def login():
 
 
 
-# 
 # # Run the rout of the web page (python decorator)
 # # @app.route("/", methods = ["GET", "POST"])
 # @app.route("/", methods = ["POST"])
@@ -54,10 +53,9 @@ def login():
 #                         password TEXT NOT NULL,
 #                         email TEXT NOT NULL); ''' )
 #         conn.close()
-
 #     return render_template("login.html")
 #     # return render_template("index.html")
-# 
+
 
 
 @app.route("/register", methods=["GET","POST"])

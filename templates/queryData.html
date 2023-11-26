@@ -14,21 +14,53 @@
     <form action="/query" method="post">
         <div class="container">
             <br>Please fill the following details to generate the Quaterly Maintenance demand for the members:<br>
-    
+
             <br>Month From
             <!-- <input name="month1" type="date" autocomplete="off" min="1" max="12" placeholder="Starting Month"> -->
             <input name="month1" type="date" autocomplete="off" required>
             to
-            <input name="month1" type="date" autocomplete="off" placeholder="Ending Month" required>
-    
+            <input name="month2" type="date" autocomplete="off" placeholder="Ending Month" required>
             <br><br>
-            <input name="FlatNo" type="text" autocomplete="off"  autofocus placeholder="Flat Number">
-            </br><br>
+            <select id="userQuerySelect" required>
+                <option disabled selected>Query Type</option>
+                <option value="flatNo">Single Flat No.</option>
+                <option value="memberNo">Single Member No.</option>
+                <option value="allFlats">All Flats</option>
+                <option value="allMember">All Members</option>
+            </select>
+            <br>
+            <span>
+                <input type="radio" name="inputSelection" onclick="disableMemberInput()"> Flat Number
+                <input type="radio" name="inputSelection" onclick="disableFlatInput()"> Membership Number
+                <input type="radio" name="inputSelection" onclick="disableAllInputs()"> All Flats
+                <input type="radio" name="inputSelection" onclick="disableAllInputs()"> All Members
+            </span>
+            <br>
+            <input type="text"name="FlatNo" id="fltNo" autocomplete="off" autofocus placeholder="Flat Number">
+            <br>
+            <input type="text" name="membershipNo" id="memberNo" autocomplete="off" autofocus placeholder="Membership Number">
             <br><br>
-            <input name="membershipNo" type="text" autocomplete="off"  autofocus placeholder="Membership Number">
-            </br><br>
-            <button type="submit">Generate Demand</button>
+            <input type="checkbox" id="selectionAll" name="allSelected" value="allMembers">All Members
+            <!-- <form action="/demand-letters"> -->
+            <br>
+            <label for="myfile">Select input data file (only xml and xls supported):</label>
+            <br>
+            <input type="file" id="membersDataFile" name="dataFile"><br><br>
+            <button class="login-btns" type="submit">Generate Demand</button>
+            <!-- </form> -->
         </div>
     </form>
+
+	{% block script %}
+		<script type="text/javascript" src="static/myFunctions.js"></script>
+	{% endblock %}
+
+    <!-- <footer>
+        <p class="footer">Name of the Appartment<br>
+        </p>
+    </footer> -->
+    <!-- <footer class="footer">  
+        @Copyright <a href="#"> Name of Appartment </a>, Delhi, India 2020- All Right Reserved.
+    </footer> -->
 
 {% endblock %}
