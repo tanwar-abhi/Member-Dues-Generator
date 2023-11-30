@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_session import Session
 import src.Functions as fn
-# import os, sqlite3
+import os, sqlite3
+from werkzeug.utils import secure_filename
+
+
 
 # Run the web application (flask)
 app = Flask(__name__)
@@ -13,14 +16,28 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# File upload path and configurations
+UPLOAD_FOLDER = "database/fileUploaded"
+ALLOWED_EXTENSIONS = {"pdf", "xls", "txt"}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
 # Running app in debug mode
 # app.run(debug=True)
 
 @app.route("/")
 def index():
+    if os.path.isdir("database") == False:
+        os.mkdir("database")
+        fn.createDB()
+    else:
+        if os.path.isfile("database/appData.db") == False:
+            fn.createDB()
+
     if not session.get("name"):
         return redirect ("/login")
-    return render_template("postLogin.html", userName=session["name"])
+    # return render_template("postLogin.html", userName=session["name"])
+    return render_template("postLogin.html")
 
 
 
@@ -94,7 +111,19 @@ def getQueryInputs():
     #         return render_template("queryData.html", FlatNo=request.form.get("FlatNo"))
 
 
-    if request.method == "GET":
+    if request.method == "POST":
+        if os.path.isdir(UPLOAD_FOLDER) == False:
+            os.mkdir(UPLOAD_FOLDER)
+
+        uploadedFile = request.files["dataFile"]
+        # if uploadedFile and allowed_file()
+        if uploadedFile:
+            uploadedFile = secure_filename(uploadedFile.filename)
+            uploadedFile.save(os.path.join(app.config['UPLOAD_FOLDER'], uploadedFile))
+        return render_template("success.html", fName=uploadedFile, fPath=UPLOAD_FOLDER)
+
+    # if request.method == "GET":
+    else:
         if request.args.get("selection") == "logout":
             return redirect("/logout")
 

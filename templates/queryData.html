@@ -32,16 +32,22 @@
             <span>
                 <input type="radio" name="inputSelection" onclick="disableMemberInput()"> Flat Number
                 <input type="radio" name="inputSelection" onclick="disableFlatInput()"> Membership Number
-                <input type="radio" name="inputSelection" onclick="disableAllInputs()"> All Flats
-                <input type="radio" name="inputSelection" onclick="disableAllInputs()"> All Members
+                <input type="radio" name="inputSelection" onclick="disableAllInputs('fltNo')"> All Flats
+                <input type="radio" name="inputSelection" onclick="disableAllInputs('memberNo')"> All Members
+
+                <!-- <input type="radio" name="inputSelection" onclick="displayFlatNoInput()"> Flat Number
+                <input type="radio" name="inputSelection" onclick="disapayMemberNoInput()"> Membership Number
+                <input type="radio" name="inputSelection" > All Flats
+                <input type="radio" name="inputSelection" > All Members -->
             </span>
             <br>
-            <input type="text"name="FlatNo" id="fltNo" autocomplete="off" autofocus placeholder="Flat Number">
+            <input type="text" name="FlatNo" id="fltNo" autocomplete="off" autofocus placeholder="Flat Number">
+            <!-- <input type="text" style="display: none;" name="FlatNo" id="fltNo" autocomplete="off" autofocus placeholder="Flat Number"> -->
             <br>
             <input type="text" name="membershipNo" id="memberNo" autocomplete="off" autofocus placeholder="Membership Number">
+            <!-- <input type="text" style="display: none;" name="membershipNo" id="memberNo" autocomplete="off" autofocus placeholder="Membership Number"> -->
             <br><br>
-            <input type="checkbox" id="selectionAll" name="allSelected" value="allMembers">All Members
-            <!-- <form action="/demand-letters"> -->
+            <input type="checkbox" id="selectionAll" name="allSelected" value="allMembers" onclick="enableAllInputs()">All Members
             <br>
             <label for="myfile">Select input data file (only xml and xls supported):</label>
             <br>
@@ -52,7 +58,7 @@
     </form>
 
 	{% block script %}
-		<script type="text/javascript" src="static/myFunctions.js"></script>
+		<script type="text/javascript" src="static/dynamicFunctions.js"></script>
 	{% endblock %}
 
     <!-- <footer>

@@ -22,6 +22,23 @@ from docxtpl import DocxTemplate
 
 
 
+def createDB():
+    conn = sqlite3.connect("database/appData.db")
+    txn = conn.cursor()
+    txn.execute('''CREATE TABLE appUsers (userid INT PRIMARY KEY NOT NULL,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL,
+                password TEXT NOT NULL); ''' )
+    conn.close()
+    print("## New Database created ##")
+    print("Database Name = database/appData.db")
+    print("Table Name = appData.appUsers")
+    return
+
+
+
+
+
 def userDetailsInDB(dbFileName, userName, userEmail, querySender="login", userPwd=""):
 
     userEmail = userEmail.upper()

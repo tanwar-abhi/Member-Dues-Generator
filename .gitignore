@@ -129,9 +129,13 @@ dmypy.json
 .pyre/
 
 
-# Any local database
+# Any local database, pdf, .xls files
 *.csv
 *.db
+*.pdf
+*.xls*
 
-# Ignore flask sessions
+
+# Ignore flask sessions and dabase folder
 flask_session/
+database/

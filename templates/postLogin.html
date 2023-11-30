@@ -9,8 +9,10 @@
 	{% endblock %}
 
 	<div class="container">
-		Hello! {{ userName }}<br>
-		You are logged in with user name as <strong><em>{{ userName }}</em></strong>.
+		<!-- Hello! {{ userName }}<br> -->
+		<!-- You are logged in with user name as <strong><em>{{ userName }}</em></strong>. -->
+		Hello! {{ session.name }}<br>
+		You are logged in with user name as <strong><em>{{ session.name }}</em></strong>.
 		<br><br>
 
 		<form action="/query" method="get">
