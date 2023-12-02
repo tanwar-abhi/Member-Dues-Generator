@@ -45,6 +45,10 @@ body {
     width: 90%;
 }
 
+.container-align {
+    clear: both
+}
+
 .fieldset { 
     overflow: hidden; 
     margin-bottom: 5px;

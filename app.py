@@ -5,7 +5,6 @@ import os, sqlite3
 from werkzeug.utils import secure_filename
 
 
-
 # Run the web application (flask)
 app = Flask(__name__)
 
@@ -18,28 +17,27 @@ Session(app)
 
 # File upload path and configurations
 UPLOAD_FOLDER = "database/fileUploaded"
-ALLOWED_EXTENSIONS = {"pdf", "xls", "txt"}
+ALLOWED_EXTENSIONS = {"xls", "xlsx", "xlsm", "xlsb", "pdf", "txt"}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
-# Running app in debug mode
-# app.run(debug=True)
+
 
 @app.route("/")
 def index():
     if os.path.isdir("database") == False:
         os.mkdir("database")
-        fn.createDB()
+        fn.createDB("database/appData.db")
     else:
         if os.path.isfile("database/appData.db") == False:
-            fn.createDB()
+            fn.createDB("database/appData.db")
+        else:
+            print("## Database already exist in filesystem.")
 
     if not session.get("name"):
         return redirect ("/login")
     # return render_template("postLogin.html", userName=session["name"])
     return render_template("postLogin.html")
-
-
 
 
 
@@ -51,27 +49,6 @@ def login():
         return redirect("/")
     return render_template("login.html")
 
-
-
-
-
-# # Run the rout of the web page (python decorator)
-# # @app.route("/", methods = ["GET", "POST"])
-# @app.route("/", methods = ["POST"])
-# def index():
-#     if os.path.isdir("database") == False:
-#         os.mkdir("database")
-
-#     if os.path.is_file("database/appData.db") == False:
-#         conn = sqlite3.connect("appData.db")
-#         txn = conn.cursor()
-#         txn.execute('''CREATE TABLE user (id INT PRIMARY KEY NOT NULL,
-#                         name TEXT NOT NULL,
-#                         password TEXT NOT NULL,
-#                         email TEXT NOT NULL); ''' )
-#         conn.close()
-#     return render_template("login.html")
-#     # return render_template("index.html")
 
 
 
@@ -95,35 +72,40 @@ def logout():
 
 
 
-
 @app.route("/query", methods=["GET","POST"])
 def getQueryInputs():
 
-    # if request.method == "POST":
-    #     # if request.form["queryType"] == "newQuery":
-    #     if "newQuery" in request.form:
-    #         flatNo = request.form.get("FlatNo")
-
-    #         if not flatNo:
-    #             memberNumber = request.form.get("MemberNumber")
-
-    #         # membersDF, intrestDF = fn.getData(dataFileName)
-    #         return render_template("queryData.html", FlatNo=request.form.get("FlatNo"))
-
+    print("## Inside /query")
 
     if request.method == "POST":
+        print("## request type is POST deteected")
         if os.path.isdir(UPLOAD_FOLDER) == False:
             os.mkdir(UPLOAD_FOLDER)
+            print("## Created Upload Folder and filepath")
 
         uploadedFile = request.files["dataFile"]
-        # if uploadedFile and allowed_file()
+        # Checking if uploadedFile in post request
+        # print("## Filename = ", uploadedFile.filename)
+        securedFileName = secure_filename(uploadedFile.filename)
+        print("## Secured file name")
+        uploadedFile.save(securedFileName)
+        print("## File saved successfully in folder = ", UPLOAD_FOLDER)
+
         if uploadedFile:
-            uploadedFile = secure_filename(uploadedFile.filename)
-            uploadedFile.save(os.path.join(app.config['UPLOAD_FOLDER'], uploadedFile))
-        return render_template("success.html", fName=uploadedFile, fPath=UPLOAD_FOLDER)
+            print("## get the uploaded file from request object")
+        if fn.isAllowed(uploadedFile.filename, EXTENSIONS=ALLOWED_EXTENSIONS):
+            print("## file extension checked")
+
+
+        if uploadedFile and fn.isAllowed(uploadedFile.filename, EXTENSIONS=ALLOWED_EXTENSIONS):
+            print("## uploaded a File in query page.\n## Extension of file exist in allowed extensions")
+            securedFileName = secure_filename(uploadedFile.filename)
+            uploadedFile.save(os.path.join(app.config['UPLOAD_FOLDER'], securedFileName))
+        return render_template("success.html", fName=securedFileName, fPath=UPLOAD_FOLDER)
 
     # if request.method == "GET":
     else:
+        print("## request type is GET deteected")
         if request.args.get("selection") == "logout":
             return redirect("/logout")
 

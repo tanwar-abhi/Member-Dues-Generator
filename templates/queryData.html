@@ -17,9 +17,9 @@
 
             <br>Month From
             <!-- <input name="month1" type="date" autocomplete="off" min="1" max="12" placeholder="Starting Month"> -->
-            <input name="month1" type="date" autocomplete="off" required>
+            <input name="month1" type="date" autocomplete="off">
             to
-            <input name="month2" type="date" autocomplete="off" placeholder="Ending Month" required>
+            <input name="month2" type="date" autocomplete="off" placeholder="Ending Month">
             <br><br>
             <select id="userQuerySelect" required>
                 <option disabled selected>Query Type</option>
@@ -49,9 +49,9 @@
             <br><br>
             <input type="checkbox" id="selectionAll" name="allSelected" value="allMembers" onclick="enableAllInputs()">All Members
             <br>
-            <label for="myfile">Select input data file (only xml and xls supported):</label>
+            <label for="myfile">Select input data file (only xls or other excel file formats supported):</label>
             <br>
-            <input type="file" id="membersDataFile" name="dataFile"><br><br>
+            <input type="file" id="membersDataFile" name="dataFile" required><br><br>
             <button class="login-btns" type="submit">Generate Demand</button>
             <!-- </form> -->
         </div>

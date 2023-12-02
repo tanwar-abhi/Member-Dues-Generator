@@ -22,8 +22,8 @@ from docxtpl import DocxTemplate
 
 
 
-def createDB():
-    conn = sqlite3.connect("database/appData.db")
+def createDB(dbPath):
+    conn = sqlite3.connect(dbPath)
     txn = conn.cursor()
     txn.execute('''CREATE TABLE appUsers (userid INT PRIMARY KEY NOT NULL,
                 name TEXT NOT NULL,
@@ -36,6 +36,12 @@ def createDB():
     return
 
 
+def isAllowed(fileName, EXTENSIONS):
+    nameSplit = fileName.split('.')
+    nameSplit = nameSplit[len(nameSplit)-1]
+    if nameSplit in EXTENSIONS:
+        return True
+    return False
 
 
 
