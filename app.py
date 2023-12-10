@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, session
+# from fileinput import filename
 from flask_session import Session
 import src.Functions as fn
 import os, sqlite3
@@ -10,13 +11,14 @@ app = Flask(__name__)
 
 
 # Configuring sessions
-# Saving sessions on servers itslef
+# Saving sessions on servers itself
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+
 # File upload path and configurations
-UPLOAD_FOLDER = "database/fileUploaded"
+UPLOAD_FOLDER = "database/fileUploaded/"
 ALLOWED_EXTENSIONS = {"xls", "xlsx", "xlsm", "xlsb", "pdf", "txt"}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -31,8 +33,7 @@ def index():
     else:
         if os.path.isfile("database/appData.db") == False:
             fn.createDB("database/appData.db")
-        else:
-            print("## Database already exist in filesystem.")
+
 
     if not session.get("name"):
         return redirect ("/login")
@@ -76,6 +77,7 @@ def logout():
 def getQueryInputs():
 
     print("## Inside /query")
+    # uploadStatus = {'uploadSuccess': 'aa'}
 
     if request.method == "POST":
         print("## request type is POST deteected")
@@ -84,24 +86,28 @@ def getQueryInputs():
             print("## Created Upload Folder and filepath")
 
         uploadedFile = request.files["dataFile"]
-        # Checking if uploadedFile in post request
-        # print("## Filename = ", uploadedFile.filename)
-        securedFileName = secure_filename(uploadedFile.filename)
-        print("## Secured file name")
-        uploadedFile.save(securedFileName)
-        print("## File saved successfully in folder = ", UPLOAD_FOLDER)
 
+        # Checking if uploadedFile in post request
         if uploadedFile:
             print("## get the uploaded file from request object")
         if fn.isAllowed(uploadedFile.filename, EXTENSIONS=ALLOWED_EXTENSIONS):
             print("## file extension checked")
+        else:
+            print("!! FINE NOT IN ALLOWED EXTENSTIONS")
 
 
         if uploadedFile and fn.isAllowed(uploadedFile.filename, EXTENSIONS=ALLOWED_EXTENSIONS):
+            session["allowedFile"] = True
             print("## uploaded a File in query page.\n## Extension of file exist in allowed extensions")
             securedFileName = secure_filename(uploadedFile.filename)
             uploadedFile.save(os.path.join(app.config['UPLOAD_FOLDER'], securedFileName))
-        return render_template("success.html", fName=securedFileName, fPath=UPLOAD_FOLDER)
+            return render_template("success.html", fName=securedFileName, fPath=UPLOAD_FOLDER)
+        else:
+            session["allowedFile"] = False
+            # uploadStatus = {'uploadSuccess': False}
+            # uploadStatus = False
+            return render_template("queryData.html", uploadStatus=False)
+
 
     # if request.method == "GET":
     else:
@@ -112,6 +118,6 @@ def getQueryInputs():
         elif request.args.get("selection") == "defaulter":
             return render_template("defaulterQuery.html")
 
-    return render_template("queryData.html")
+    return render_template("queryData.html", uploadStatus=None)
 
 

@@ -48,10 +48,10 @@ function disableAllInputs(argParameter){
 
 
 
-function disableAllInputs(){
-	document.getElementById("fltNo").disabled = true;
-	document.getElementById("memberNo").disabled = true;
-}
+// function disableAllInputs(){
+// 	document.getElementById("fltNo").disabled = true;
+// 	document.getElementById("memberNo").disabled = true;
+// }
 
 
 
@@ -66,3 +66,8 @@ function disapayMemberNoInput(){
 	// style="display: none;
 }
 
+// function alertFailedUpload(data){
+// 	if (data.uploadSuccess === false){
+// 		alert("This file extension is not allowed.\nPlease upload only .xls* or .pdf files")
+// 	}
+// }

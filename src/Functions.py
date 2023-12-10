@@ -36,6 +36,7 @@ def createDB(dbPath):
     return
 
 
+
 def isAllowed(fileName, EXTENSIONS):
     nameSplit = fileName.split('.')
     nameSplit = nameSplit[len(nameSplit)-1]
@@ -122,9 +123,6 @@ def getInputs():
 
 
 
-
-
-
 def getData(dataFile):
     '''
     This function process the data, performs data cleaning and prepare it in format to 
@@ -205,7 +203,6 @@ def getData(dataFile):
             totalIntMaint.append(0)
             interestConstruction.append(0)
 
-
     df_Member["Maintenance Dues"] = totalMaint
     df_Intrest["Interest on Maintenance"] = totalIntMaint
     
@@ -219,7 +216,6 @@ def getData(dataFile):
 
 
 def searchData(flatNo, memNumber,membersDF, intrestDF):
-
 
     if (flatNo.isalnum()):
         xI = list(membersDF['FLATNO.']).index(flatNo)
@@ -239,13 +235,12 @@ def searchData(flatNo, memNumber,membersDF, intrestDF):
             "CCB" : dictMember["Construction Cost Due"], "CCI" : dictInterest["Interest on Construction Cost"]}
 
 
-
     data["PMTD"] = data["PMB"] + data["PMI"]
     data["CCTD"] = data["CCB"] + data["CCI"]
     data["Date"] = date.today().strftime("%d/%m/%Y")
 
-
     return data
+
 
 
 
@@ -267,10 +262,9 @@ def GenerateDocx(FlatNo, memberNo, nextMC, membersDF, intrestDF, templateFile, f
     if Data["FlatNo"] == 0:
         Data["FlatNo"] = "N/A"
 
-
     doc = DocxTemplate(templateFile)
     doc.render(Data)
-    
+
     # Path and name of new file created
     if (Data["FlatNo"].isalnum()):
         outfileName = folderName + Data["FlatNo"] + ".docx"
@@ -280,6 +274,8 @@ def GenerateDocx(FlatNo, memberNo, nextMC, membersDF, intrestDF, templateFile, f
     doc.save(outfileName)
 
     return
+
+
 
 
 
@@ -296,7 +292,6 @@ def generateDefaulters(membersDF, intrestDF, dirName, option):
 
     # Drop all rows from interest Data frame with no member names (unalloted)
     intrestDF.drop([i+1 for i in zeroRows], inplace = True)
-
 
     defaulterDF = membersDF.filter(["SL.NO.","NAME", "M.SHIPNO.", "FLATNO."], axis=1)
 
@@ -316,12 +311,9 @@ def generateDefaulters(membersDF, intrestDF, dirName, option):
     defaulterDF.rename(columns = {'FLATNO.':'Flat No.'}, inplace = True)
     defaulterDF.rename(columns = {'M.SHIPNO.':'Membership No.'}, inplace = True)
 
-
-
     # Get date of dues calculation form excel file
     excelDate = str(defaulterDF["NAME"][0])
     excelDate = excelDate.split()
-
 
     # Remove all 0 dues values i.e. non defaulters from Data Frame
     if option == 1 or option == 3:
@@ -344,7 +336,6 @@ def generateDefaulters(membersDF, intrestDF, dirName, option):
     # Adding space before final comment
     defaulterDF = defaulterDF.append(pd.Series([np.nan for _ in defaulterDF.columns], index=defaulterDF.columns), ignore_index=True)
 
-
     if option == 1:
         defaulterDF.loc[len(defaulterDF)] = ["##", " NOTE : The dues are calculated till ", excelDate[0], excelDate[0], " ", "##", " "]
         fileName = dirName + "Maintenance_Defaulters_List_" + date.today().strftime("%m-%Y") + ".xlsx"
@@ -363,11 +354,11 @@ def generateDefaulters(membersDF, intrestDF, dirName, option):
 
 
 
+
 def main(dataFileName, FlatNo, memberNo, nextMC, templateFile, dirName):
 
     # Replace all Non available values (nan) by 0
     membersDF, intrestDF = getData(dataFileName)
-
 
     if (FlatNo.isalpha()):
         if FlatNo == 'ALL':
@@ -397,8 +388,8 @@ def main(dataFileName, FlatNo, memberNo, nextMC, templateFile, dirName):
     else:
         GenerateDocx(FlatNo, memberNo, nextMC, membersDF, intrestDF, templateFile, dirName)
 
-
     return
+
 
 
 
@@ -429,5 +420,4 @@ def mainDefaulter(dataFileName,dirName):
     _ = input("## PRESS ENTER TO EXIT ##\n")
 
     return
-
 
