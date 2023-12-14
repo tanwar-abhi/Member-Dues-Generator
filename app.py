@@ -4,7 +4,7 @@ from flask_session import Session
 import src.Functions as fn
 import os, sqlite3
 from werkzeug.utils import secure_filename
-
+from datetime import date
 
 # Run the web application (flask)
 app = Flask(__name__)
@@ -18,8 +18,9 @@ Session(app)
 
 
 # File upload path and configurations
-UPLOAD_FOLDER = "database/fileUploaded/"
-ALLOWED_EXTENSIONS = {"xls", "xlsx", "xlsm", "xlsb", "pdf", "txt"}
+UPLOAD_FOLDER = os.getcwd() + "/database/fileUploaded/"
+ALLOWED_EXTENSIONS_DATA = {"xls", "xlsx", "xlsm", "xlsb", "pdf", "txt"}
+ALLOWED_EXTENSIONS_TEMP = {"doc"}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
@@ -76,37 +77,55 @@ def logout():
 @app.route("/query", methods=["GET","POST"])
 def getQueryInputs():
 
-    print("## Inside /query")
-    # uploadStatus = {'uploadSuccess': 'aa'}
-
     if request.method == "POST":
-        print("## request type is POST deteected")
+        print("## Inside ROUTe=/query ; request type is POST deteected")
         if os.path.isdir(UPLOAD_FOLDER) == False:
             os.mkdir(UPLOAD_FOLDER)
             print("## Created Upload Folder and filepath")
 
-        uploadedFile = request.files["dataFile"]
 
-        # Checking if uploadedFile in post request
-        if uploadedFile:
-            print("## get the uploaded file from request object")
-        if fn.isAllowed(uploadedFile.filename, EXTENSIONS=ALLOWED_EXTENSIONS):
-            print("## file extension checked")
+        uploadedDataFile = request.files["dataFile"]
+        uploadedTempFile = request.files["tempFile"]
+
+        FlatNo = request.form.get("FlatNo")
+        memberNo = request.form.get("membershipNo")
+        nextMC = 0
+        folderName = "Maintenance_Demand_" + date.today().strftime("%m-%Y") + "/"
+
+
+        # Checking if uploaded data File in post request
+        if uploadedDataFile and fn.isAllowed(uploadedDataFile.filename, EXTENSIONS=ALLOWED_EXTENSIONS_DATA):
+            session["allowedDataFile"] = True
+            print("## uploaded a data File in query page.\n## Extension of file exist in allowed extensions")
+            securedDataFileName = secure_filename(uploadedDataFile.filename)
+            uploadedDataFile.save(os.path.join(app.config['UPLOAD_FOLDER'], securedDataFileName))
         else:
-            print("!! FINE NOT IN ALLOWED EXTENSTIONS")
+            session["allowedDataFile"] = False
+
+        # Checking if uploaded template File in post request
+        if uploadedTempFile and fn.isAllowed(uploadedTempFile.filename, EXTENSIONS=ALLOWED_EXTENSIONS_TEMP):
+            session["allowedTempFile"] = True
+            print("## uploaded a template File in query page.\n## Extension of file exist in allowed extensions")
+            securedTempFileName = secure_filename(uploadedTempFile.filename)
+            uploadedTempFile.save(os.path.join(app.config['UPLOAD_FOLDER'], securedTempFileName))
+        else:
+            session["allowedTempFile"] = False
 
 
-        if uploadedFile and fn.isAllowed(uploadedFile.filename, EXTENSIONS=ALLOWED_EXTENSIONS):
-            session["allowedFile"] = True
-            print("## uploaded a File in query page.\n## Extension of file exist in allowed extensions")
-            securedFileName = secure_filename(uploadedFile.filename)
-            uploadedFile.save(os.path.join(app.config['UPLOAD_FOLDER'], securedFileName))
-            return render_template("success.html", fName=securedFileName, fPath=UPLOAD_FOLDER)
+        if session["allowedDataFile"] and session["allowedTempFile"]:
+            # Generate Doc requests
+            dataFileName = UPLOAD_FOLDER + securedDataFileName
+            templateFile = UPLOAD_FOLDER + securedTempFileName
+            fn.main(dataFileName, FlatNo, memberNo, nextMC, templateFile, folderName)
+
+            return render_template("success.html", fName=securedDataFileName, fPath=UPLOAD_FOLDER)
+
         else:
             session["allowedFile"] = False
             # uploadStatus = {'uploadSuccess': False}
             # uploadStatus = False
-            return render_template("queryData.html", uploadStatus=False)
+            return render_template("failed.html", uploadStatus=False)
+
 
 
     # if request.method == "GET":
@@ -118,6 +137,6 @@ def getQueryInputs():
         elif request.args.get("selection") == "defaulter":
             return render_template("defaulterQuery.html")
 
-    return render_template("queryData.html", uploadStatus=None)
+    return render_template("queryData.html")
 
 

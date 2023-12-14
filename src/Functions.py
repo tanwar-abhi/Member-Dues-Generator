@@ -205,7 +205,7 @@ def getData(dataFile):
 
     df_Member["Maintenance Dues"] = totalMaint
     df_Intrest["Interest on Maintenance"] = totalIntMaint
-    
+
     df_Member["Construction Cost Due"] = totalConstructionBal
     df_Intrest["Interest on Construction Cost"] = interestConstruction
 

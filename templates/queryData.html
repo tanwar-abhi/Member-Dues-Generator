@@ -10,7 +10,6 @@
         </form>
     {% endblock %}
 
-    <!-- <form action="/query" method="post"> -->
     <form action="/query" method="post" enctype="multipart/form-data">
         <div class="container">
             <br>Please fill the following details to generate the Quaterly Maintenance demand for the members:<br>
@@ -39,6 +38,17 @@
             </span>
             <br>
 
+            <!-- <span>
+                <input type="radio" name="inputSelection" id="flatNum" onclick="disableMemberInput()">
+                <label for="flatNum">Flat Number</label>
+                <input type="radio" name="inputSelection" id="memberNum" onclick="disableFlatInput()">
+                <label for="memberNum">Membership Number</label>
+                <input type="radio" name="inputSelection" id="allFlat" onclick="disableAllInputs('fltNo')">
+                <label for="allFlat">All Flats</label>
+                <input type="radio" name="inputSelection" id="allMember" onclick="disableAllInputs('memberNo')">
+                <label for="allMember">All Members</label>
+            </span> -->
+
             <input type="text" name="FlatNo" id="fltNo" autocomplete="off" autofocus placeholder="Flat Number">
             <!-- <input type="text" style="display: none;" name="FlatNo" id="fltNo" autocomplete="off" autofocus placeholder="Flat Number"> -->
             <br>
@@ -47,9 +57,18 @@
             <br><br>
             <input type="checkbox" id="selectionAll" name="allSelected" value="allMembers" onclick="enableAllInputs()">All Members
             <br>
-            <label for="myfile">Select input data file (only xls or other excel file formats supported):</label>
-            <br>
-            <input type="file" id="membersDataFile" name="dataFile" required><br><br>
+
+            <div class="align-left-side">
+                <label for="membersDataFile">Select input data file (only xls or other excel file formats supported):</label>
+                <br>
+                <input type="file" id="membersDataFile" name="dataFile" required>
+            </div>
+
+            <div class="align-right-side">
+                <input type="file" id="requestTemplate" name="tempFile" required>
+            </div>
+            <br><br>
+
             <button class="login-btns" type="submit">Generate Demand</button>
             <!-- </form> -->
         </div>
@@ -58,15 +77,14 @@
 	{% block script %}
 		<script type="text/javascript" src="static/dynamicFunctions.js"></script>
         <!-- <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
-
 	{% endblock %}
 
     <!-- <footer>
         <p class="footer">Name of the Appartment<br>
         </p>
     </footer> -->
-    <!-- <footer class="footer">  
+    <footer class="footer">  
         @Copyright <a href="#"> Name of Appartment </a>, Delhi, India 2020- All Right Reserved.
-    </footer> -->
+    </footer>
 
 {% endblock %}

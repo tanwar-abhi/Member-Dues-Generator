@@ -3,8 +3,21 @@
 
 {% block body %}
 
-	File Uploaded successfully.<br>
-	File uploaded to path = {{ fPath }}<br>
-	Name of uploaded file  = {{ fName }}
+	<div>
+		File Uploaded successfully.<br>
+		File uploaded to path = {{ fPath }}<br>
+		Name of uploaded file  = {{ fName }}
+	</div>
+
+	<br>
+
+	<!-- Pdf file uploaded by you is :: <a href= "file://{{ fPath }}{{ fName }}"> {{ fName }} </a><br> -->
+
+	<!-- <iframe src="file://{{ fPath }}{{ fName }}" width="800" height="500" ></iframe>
+	<br><br>
+	<object data="file://{{ fPath }}{{ fName }}" width="800"height="500"> </object> 
+	<br><br>
+	<embed src="file://{{ fPath }}{{ fName }}" width="800" height="500"> -->
+	<!-- <br> -->
 
 {% endblock %}

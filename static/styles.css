@@ -103,6 +103,7 @@ body {
 
 
 .login-form-left{
+/* .left-side-shift{ */
     /* border: 2px solid black; */
     float: left;
     text-align: center;
@@ -110,11 +111,11 @@ body {
     margin: 0px 10px 50px 300px;
 }
 
-/* .text-def-size{
-    font-size: 25px;
-} */
+
+
 
 .form-register{
+/* .right-side-shift{ */
     /* border: 2px solid black; */
     float: right;
     margin: 45px 350px 50px 20px;

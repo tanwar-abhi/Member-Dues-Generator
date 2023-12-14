@@ -48,10 +48,10 @@ function disableAllInputs(argParameter){
 
 
 
-// function disableAllInputs(){
-// 	document.getElementById("fltNo").disabled = true;
-// 	document.getElementById("memberNo").disabled = true;
-// }
+function disableAllInputs(){
+	document.getElementById("fltNo").disabled = true;
+	document.getElementById("memberNo").disabled = true;
+}
 
 
 
