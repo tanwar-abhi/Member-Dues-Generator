@@ -1,8 +1,11 @@
 
-{% extend 'layout.html' %}
+{% extends 'layout.html' %}
 
 {% block body %}
 	Arey i to fail hui gaya re.
+	Fail to upload {{ failedFileType }} file.
 
+	{% block ftr %}
+	{% endblock %}
 
 {% endblock %}

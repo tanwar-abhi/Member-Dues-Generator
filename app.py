@@ -87,11 +87,6 @@ def getQueryInputs():
         uploadedDataFile = request.files["dataFile"]
         uploadedTempFile = request.files["tempFile"]
 
-        FlatNo = request.form.get("FlatNo")
-        memberNo = request.form.get("membershipNo")
-        nextMC = 0
-        folderName = "Maintenance_Demand_" + date.today().strftime("%m-%Y") + "/"
-
 
         # Checking if uploaded data File in post request
         if uploadedDataFile and fn.isAllowed(uploadedDataFile.filename, EXTENSIONS=ALLOWED_EXTENSIONS_DATA):
@@ -110,21 +105,29 @@ def getQueryInputs():
             uploadedTempFile.save(os.path.join(app.config['UPLOAD_FOLDER'], securedTempFileName))
         else:
             session["allowedTempFile"] = False
+            return render_template("failed.html", failedFileType="Template")
 
 
         if session["allowedDataFile"] and session["allowedTempFile"]:
             # Generate Doc requests
             dataFileName = UPLOAD_FOLDER + securedDataFileName
             templateFile = UPLOAD_FOLDER + securedTempFileName
+
+            FlatNo = request.form.get("FlatNo")
+            memberNo = request.form.get("membershipNo")
+            print("## Recieived data FlatNo = ", FlatNo)
+            print("## Recieived data MemberNo = ", memberNo)
+            nextMC = 0
+            folderName = "Maintenance_Demand_" + date.today().strftime("%m-%Y") + "/"
             fn.main(dataFileName, FlatNo, memberNo, nextMC, templateFile, folderName)
 
             return render_template("success.html", fName=securedDataFileName, fPath=UPLOAD_FOLDER)
 
         else:
-            session["allowedFile"] = False
+            session["allowedDataFile"] = False
             # uploadStatus = {'uploadSuccess': False}
             # uploadStatus = False
-            return render_template("failed.html", uploadStatus=False)
+            return render_template("failed.html", failedFileType="Data")
 
 
 

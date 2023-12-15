@@ -124,6 +124,39 @@ body {
 }
 
 
+.box-left {
+    /* .left-side-shift{ */
+    border: 3px solid black;
+    float: left;
+    text-align: center;
+    width: 500px;
+    padding:20px;
+    margin-top: 20px;
+    margin-right: auto;
+    margin-bottom: 100px;
+    margin-left: auto
+    /* margin: 10px 100px 100px 200px; */
+}
+
+
+.box-right {
+    /* .right-side-shift{ */
+    /* border: 2px solid black; */
+    float: right;
+    border: 3px solid #969696;
+    width: 500px;
+    text-align: center;
+    padding:20px;
+    margin-top: 20px;
+    margin-right: 0;
+    margin-bottom: 100px;
+    margin-left: auto
+    /* margin: 15px 350px 100px 20px; */
+}
+
+
+
+
 /* style the submit button */
 /* input[type=submit] { */
 .register-btns{
@@ -182,28 +215,17 @@ body {
     transition: color 2s ease-in-out, background-color 0.15s ease-in-out;
 }
 
-/* 
-.footer {
-    position: fixed;
-    left: 10px;
-    bottom: 5px;
-    right: 10px;
-    top:15px;
-    width: 95%;
-    padding-left: 15px;
-    padding-right: 15px;
-    background-color: gray;
-    color: white;
-    text-align: center;
-} */
 
 .footer {
     position: fixed;
-    left: 0;
     bottom: 0;
-    padding-left: 15px;
-    padding-right: 15px;
     background-color: grey;
     color: white;
     text-align: center;
+    width:100%;
+    margin: 0 auto;
+    /* left: 550px; */
+    /* padding-left: 25px; */
+    /* padding-right: 35px; */
+    /* padding:0px; */
 }

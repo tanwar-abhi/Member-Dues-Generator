@@ -58,18 +58,23 @@
             <input type="checkbox" id="selectionAll" name="allSelected" value="allMembers" onclick="enableAllInputs()">All Members
             <br>
 
-            <div class="align-left-side">
-                <label for="membersDataFile">Select input data file (only xls or other excel file formats supported):</label>
-                <br>
-                <input type="file" id="membersDataFile" name="dataFile" required>
-            </div>
+            <span>
+                <div class="box-left">
+                    <label for="membersDataFile">Select input data file <br>(only xls or other excel file formats supported):</label>
+                    <br>
+                    <input type="file" id="membersDataFile" name="dataFile" required>
+                </div>
 
-            <div class="align-right-side">
-                <input type="file" id="requestTemplate" name="tempFile" required>
-            </div>
-            <br><br>
+                <div class="box-right">
+                    <label for="requestTemplate">Select input template file <br>(only .doc file formats supported):</label>
+                    <br>
+                    <input type="file" id="requestTemplate" name="tempFile" required>
+                </div>
+                <br><br><br>
+                <button class="login-btns" type="submit">Generate Demand</button>
+            </span>
 
-            <button class="login-btns" type="submit">Generate Demand</button>
+            
             <!-- </form> -->
         </div>
     </form>
@@ -79,12 +84,7 @@
         <!-- <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
 	{% endblock %}
 
-    <!-- <footer>
-        <p class="footer">Name of the Appartment<br>
-        </p>
-    </footer> -->
-    <footer class="footer">  
-        @Copyright <a href="#"> Name of Appartment </a>, Delhi, India 2020- All Right Reserved.
-    </footer>
+	{% block ftr %}
+	{% endblock %}
 
 {% endblock %}
