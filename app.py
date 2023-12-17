@@ -17,10 +17,16 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 
+# Create some variables in session to be used accross whole code.
+session["databaseName"] = "appData.db"
+session["dbPath"] = os.getcwd() + "/database/appData.db"
+session = fn.getUseridFromDB(session)
+
+
 # File upload path and configurations
 UPLOAD_FOLDER = os.getcwd() + "/database/fileUploaded/"
 ALLOWED_EXTENSIONS_DATA = {"xls", "xlsx", "xlsm", "xlsb", "pdf", "txt"}
-ALLOWED_EXTENSIONS_TEMP = {"doc"}
+ALLOWED_EXTENSIONS_TEMP = {"doc", "docx"}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
@@ -61,6 +67,8 @@ def register():
         email = request.form.get("userEmail")
         pwd = request.form.get("userPwd")
 
+        fn.addNewUserInDB(session["dbPath"], userName, email, "register", )
+
     return render_template("register.html")
 
 
@@ -84,27 +92,36 @@ def getQueryInputs():
             print("## Created Upload Folder and filepath")
 
 
-        uploadedDataFile = request.files["dataFile"]
-        uploadedTempFile = request.files["tempFile"]
+        uploadedDataFile = request.files["datafile"]
+        uploadedTempFile = request.files["tempfile"]
+        # print("\n")
+        # print("@@ resquest.files  = ", request.files)
+        # print("\n")
+        # print("@@ request  = ", request)
+        # print("\n")
+        # print("@@ Session = ", session)
+        # print("\n")
 
 
         # Checking if uploaded data File in post request
         if uploadedDataFile and fn.isAllowed(uploadedDataFile.filename, EXTENSIONS=ALLOWED_EXTENSIONS_DATA):
             session["allowedDataFile"] = True
-            print("## uploaded a data File in query page.\n## Extension of file exist in allowed extensions")
+            print("## Data File uploaded successfully in query page.\n")
             securedDataFileName = secure_filename(uploadedDataFile.filename)
             uploadedDataFile.save(os.path.join(app.config['UPLOAD_FOLDER'], securedDataFileName))
         else:
+            print("!!!! DF Error :: unable to upload data file")
             session["allowedDataFile"] = False
 
         # Checking if uploaded template File in post request
         if uploadedTempFile and fn.isAllowed(uploadedTempFile.filename, EXTENSIONS=ALLOWED_EXTENSIONS_TEMP):
             session["allowedTempFile"] = True
-            print("## uploaded a template File in query page.\n## Extension of file exist in allowed extensions")
+            print("## Template file uploaded sucssesfully in query page.\n")
             securedTempFileName = secure_filename(uploadedTempFile.filename)
             uploadedTempFile.save(os.path.join(app.config['UPLOAD_FOLDER'], securedTempFileName))
         else:
             session["allowedTempFile"] = False
+            print("!!!! TF Error :: unable to upload Template file")
             return render_template("failed.html", failedFileType="Template")
 
 

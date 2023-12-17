@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 
 # Sytem, os and shutil module to run system commands and create new, copy, remove files
-import sys, sqlite3
+import sys
 
 # Module to get today's date
 from datetime import date
@@ -21,22 +21,7 @@ from docxtpl import DocxTemplate
 
 
 
-
-def createDB(dbPath):
-    conn = sqlite3.connect(dbPath)
-    txn = conn.cursor()
-    txn.execute('''CREATE TABLE appUsers (userid INT PRIMARY KEY NOT NULL,
-                name TEXT NOT NULL,
-                email TEXT NOT NULL,
-                password TEXT NOT NULL); ''' )
-    conn.close()
-    print("## New Database created ##")
-    print("Database Name = database/appData.db")
-    print("Table Name = appData.appUsers")
-    return
-
-
-
+# Function to check if the given file extension is accepted for uploading or not.
 def isAllowed(fileName, EXTENSIONS):
     nameSplit = fileName.split('.')
     nameSplit = nameSplit[len(nameSplit)-1]
@@ -44,37 +29,6 @@ def isAllowed(fileName, EXTENSIONS):
         return True
     return False
 
-
-
-def userDetailsInDB(dbFileName, userName, userEmail, querySender="login", userPwd=""):
-
-    userEmail = userEmail.upper()
-
-    connect = sqlite3.connect(dbFileName)
-    txn = connect.cursor()
-    print("Connected to SQL Database")
-
-    sqlQuery = """SELECT * FROM appUsers WHERE name=?"""
-    txn.execute(sqlQuery, (userName,))
-
-    # Return data as a list of tuple i.e. <list(tuple)>
-    data = txn.fetchall()
-
-    result = True
-
-    if len(data) == 0:
-        return False
-    elif len(data) > 1:
-        raise Exception("Database has multiple entries for user = " + userName)
-    else:
-        for row in data:
-            if row[2].upper() != userEmail:
-                result = False
-            elif querySender == "login":
-                if row[3].upper() != userPwd:
-                    result = False
-
-    return result
 
 
 
