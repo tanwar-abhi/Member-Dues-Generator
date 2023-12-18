@@ -140,13 +140,13 @@ def createDB(dbPath):
 
 
 
-def userDetailsInDB(dbFileName, userName, userEmail="", querySender="login", userPwd=""):
+def userDetailsInDB(dbFileName, userName, userEmail="", userPwd=""):
 
     userEmail = userEmail.upper()
 
     connect = sqlite3.connect(dbFileName)
     txn = connect.cursor()
-    print("Connected to SQL Database")
+    print("Connected to SQL Database from fn:userDetailsInDB ")
 
     sqlQuery = """SELECT * FROM appUsers WHERE name=?"""
     txn.execute(sqlQuery, (userName,))
@@ -158,13 +158,13 @@ def userDetailsInDB(dbFileName, userName, userEmail="", querySender="login", use
 
     if len(data) == 0:
         return False
-    elif len(data) > 1:
-        raise Exception("Database has multiple entries for user = " + userName)
+    # elif len(data) > 1:
+        # raise Exception("Database has multiple entries for user = " + userName)
     else:
         for row in data:
-            if row[2] != userEmail:
+            if row[2].upper() != userEmail:
                 result = False
-            elif querySender == "login":
+            elif len(userPwd) != 0:
                 if row[3] != userPwd:
                     result = False
 
@@ -175,12 +175,15 @@ def userDetailsInDB(dbFileName, userName, userEmail="", querySender="login", use
 
 def addNewUserInDB(currentSession, newName, newEmail, newPswd):
     result = False
-    newUserInDB = userDetailsInDB(currentSession["dbPath"], newName, newEmail, "register")
-    if newUserInDB:
+    # newUserInDB = userDetailsInDB(currentSession["dbPath"], newName, newEmail, "register")
+    currentSession, isNewUserInDB = getUseridFromDB(currentSession, newName, newEmail)
+    print("\n#### Print after getUseridFromDB currentSession = {}\nisnewUserInDB = {}".format(currentSession, isNewUserInDB) )
+
+    if isNewUserInDB:
         raise Exception("User Already exist in database, name = " + newName)
     else:
         connect = sqlite3.connect(currentSession["dbPath"])
-        print("Connected to SQL Database")
+        print("Connected to SQL Database, from fn:addNewUserInDB")
 
         sqlQuery = """INSERT INTO appUsers(userid, name, email, password) VALUES(?,?,?,?)"""
         txn = connect.cursor()
@@ -193,13 +196,13 @@ def addNewUserInDB(currentSession, newName, newEmail, newPswd):
 
 
 
-def getUseridFromDB(currentSession, userName):
+def getUseridFromDB(currentSession, userName, userEmail):
     """
     Function to get and store userID from database table into session. In case the user does't exist 
     i.e. new user then get the last userID in table so that new userid can be created and appended.
     """
     userID = 0
-    isUserInDB = userDetailsInDB(currentSession["dbPath"], userName)
+    isUserInDB = userDetailsInDB(currentSession["dbPath"], userName,userEmail)
     print("is user in database? : ", isUserInDB)
 
     connect = sqlite3.connect(currentSession["dbPath"])
@@ -222,4 +225,26 @@ def getUseridFromDB(currentSession, userName):
         currentSession["userid"] = userID + 1
         currentSession["userType"] = "new-user"
 
-    return currentSession
+    return currentSession, isUserInDB
+
+
+
+
+
+
+def printAllData(dbFileName):
+
+    connect = sqlite3.connect(dbFileName)
+    txn = connect.cursor()
+    sqlQuery = """SELECT * FROM appUsers"""
+    txn.execute(sqlQuery)
+    data = txn.fetchall()
+
+    print("Data in database = ", data)
+
+    return
+
+
+
+
+
