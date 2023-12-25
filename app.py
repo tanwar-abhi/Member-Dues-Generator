@@ -1,10 +1,13 @@
 from flask import Flask, render_template, request, redirect, session
 # from fileinput import filename
 from flask_session import Session
-import src.Functions as fn
 import os, sqlite3
 from werkzeug.utils import secure_filename
 from datetime import date
+
+import src.Functions as fn
+import src.dbOperations as db
+
 
 # Run the web application (flask)
 app = Flask(__name__)
@@ -17,16 +20,12 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 
-# Create some variables in session to be used accross whole code.
-session["databaseName"] = "appData.db"
-session["dbPath"] = os.getcwd() + "/database/appData.db"
-session = fn.getUseridFromDB(session)
 
 
 # File upload path and configurations
 UPLOAD_FOLDER = os.getcwd() + "/database/fileUploaded/"
-ALLOWED_EXTENSIONS_DATA = {"xls", "xlsx", "xlsm", "xlsb", "pdf", "txt"}
-ALLOWED_EXTENSIONS_TEMP = {"doc", "docx"}
+ALLOWED_EXTENSIONS_DATA = {"xls", "xlsx", "xlsm", "xlsb", "csv"}
+ALLOWED_EXTENSIONS_TEMP = {"doc", "docx", "odt"}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
@@ -36,11 +35,11 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def index():
     if os.path.isdir("database") == False:
         os.mkdir("database")
-        fn.createDB("database/appData.db")
+        db.createDB("database/appData.db")
+
     else:
         if os.path.isfile("database/appData.db") == False:
-            fn.createDB("database/appData.db")
-
+            db.createDB("database/appData.db")
 
     if not session.get("name"):
         return redirect ("/login")
@@ -54,6 +53,9 @@ def index():
 def login():
     if request.method == "POST":
         session["name"] = request.form.get("userName")
+        session["databaseName"] = "appData.db"
+        session["dbPath"] = os.getcwd() + "/database/appData.db"
+        print("\n# Session = ", session)
         return redirect("/")
     return render_template("login.html")
 
@@ -67,7 +69,8 @@ def register():
         email = request.form.get("userEmail")
         pwd = request.form.get("userPwd")
 
-        fn.addNewUserInDB(session["dbPath"], userName, email, "register", )
+        # Add new user to the database
+        # db.addNewUserInDB(session, userName, email, pwd)
 
     return render_template("register.html")
 
@@ -94,13 +97,6 @@ def getQueryInputs():
 
         uploadedDataFile = request.files["datafile"]
         uploadedTempFile = request.files["tempfile"]
-        # print("\n")
-        # print("@@ resquest.files  = ", request.files)
-        # print("\n")
-        # print("@@ request  = ", request)
-        # print("\n")
-        # print("@@ Session = ", session)
-        # print("\n")
 
 
         # Checking if uploaded data File in post request
@@ -122,7 +118,7 @@ def getQueryInputs():
         else:
             session["allowedTempFile"] = False
             print("!!!! TF Error :: unable to upload Template file")
-            return render_template("failed.html", failedFileType="Template")
+
 
 
         if session["allowedDataFile"] and session["allowedTempFile"]:
@@ -132,20 +128,33 @@ def getQueryInputs():
 
             FlatNo = request.form.get("FlatNo")
             memberNo = request.form.get("membershipNo")
-            print("## Recieived data FlatNo = ", FlatNo)
-            print("## Recieived data MemberNo = ", memberNo)
+            print("\n################\n## Recieived data FlatNo = ", FlatNo)
+            print("## Recieived data MemberNo = {}\n".format(memberNo))
+
+
             nextMC = 0
-            folderName = "Maintenance_Demand_" + date.today().strftime("%m-%Y") + "/"
-            fn.main(dataFileName, FlatNo, memberNo, nextMC, templateFile, folderName)
+            exportFolder = "Maintenance_Demand_" + date.today().strftime("%m-%Y") + "/"
+            session["outputFolder"] = exportFolder
+
+            #Make folder to save all letters
+            if os.path.isdir(exportFolder) == False:
+                os.mkdir(exportFolder)
+
+            FlatNo, nextMC = fn.processUserInputs(FlatNo, nextMC)
+
+            try:
+                fn.main(dataFileName, FlatNo, memberNo, nextMC, templateFile, exportFolder)
+            except:
+                print(" !!!! Error :: Exception caught, something when wrong in query main ")
+                return render_template("failed.html", failedFileType="Error in main query function")
 
             return render_template("success.html", fName=securedDataFileName, fPath=UPLOAD_FOLDER)
 
         else:
-            session["allowedDataFile"] = False
-            # uploadStatus = {'uploadSuccess': False}
-            # uploadStatus = False
-            return render_template("failed.html", failedFileType="Data")
-
+            errorFrom = "Template"
+            if session["allowedDataFile"] == False:
+                errorFrom = "Data"
+            return render_template("failed.html", failedFileType=errorFrom)
 
 
     # if request.method == "GET":

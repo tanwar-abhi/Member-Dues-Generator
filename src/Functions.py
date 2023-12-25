@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 
 # Sytem, os and shutil module to run system commands and create new, copy, remove files
-import sys
+import sys, os
 
 # Module to get today's date
 from datetime import date
@@ -31,6 +31,21 @@ def isAllowed(fileName, EXTENSIONS):
 
 
 
+
+
+
+
+
+
+
+def processUserInputs(flatNo, NextMC):
+
+    flatNo = flatNo.upper()
+    # membershipNo = membershipNo.upper() // DON'T ADD THIS LINE here
+
+    # Set data type as integer
+    NextMC = int(NextMC)
+    return flatNo, NextMC
 
 
 
@@ -200,7 +215,7 @@ def searchData(flatNo, memNumber,membersDF, intrestDF):
 
 
 def GenerateDocx(FlatNo, memberNo, nextMC, membersDF, intrestDF, templateFile, folderName):
-    
+
     if memberNo.isnumeric():
         memberNo = int(memberNo)
 

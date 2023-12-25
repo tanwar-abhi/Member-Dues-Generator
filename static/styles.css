@@ -136,6 +136,24 @@ body {
 }
 
 
+
+.box-center {
+    /* .left-side-shift{ */
+    border: 3px solid black;
+    float: center;
+    text-align: center;
+    width: 500px;
+    padding:10px;
+    margin-top: 20px;
+    margin-right: auto;
+    margin-bottom: 100px;
+    margin-left: auto
+    /* margin: 10px 100px 100px 200px; */
+}
+
+
+
+
 .box-left {
     /* .left-side-shift{ */
     border: 3px solid black;
@@ -182,6 +200,12 @@ body {
     font-size: 17px;
 }
 
+/* Darker background on mouse-over */
+.register-btns:hover {
+    background-color: darkolivegreen;
+}
+
+
 
 .login-btns{
     background-color:blueviolet;
@@ -192,6 +216,11 @@ body {
     padding: 08px 12px;
     border-radius: 10px;
     font-size: 17px;
+}
+
+/* Darker background on mouse-over */
+.login-btns:hover {
+    background-color: darkorchid;
 }
 
 
@@ -207,11 +236,46 @@ body {
 }
 
 
+/* Darker background on mouse-over */
+.logout-btns:hover {
+    background-color: darkred;
+}
+
+
+.logout-btns-small{
+    /* background-color: red; */
+    background-color: purple;
+    color: white;
+    cursor: pointer;
+    vertical-align: middle;
+    text-align: center;
+    padding: 04px 6px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+
+.download-btn {
+    background-color: DodgerBlue;
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+/* Darker background on mouse-over */
+.download-btn:hover {
+    background-color: RoyalBlue;
+}
+
+
+
 .jumbotron {
     background-color: #477bff;
     color: #fff;
-    margin-bottom: 1rem;
-    padding: 1rem 1rem;
+    padding: 0.2rem 0.2rem;
+    margin-bottom: 0.2rem;
     text-align: center;
 }
 

@@ -146,7 +146,7 @@ def userDetailsInDB(dbFileName, userName, userEmail="", userPwd=""):
 
     connect = sqlite3.connect(dbFileName)
     txn = connect.cursor()
-    print("Connected to SQL Database from fn:userDetailsInDB ")
+    # print("Connected to SQL Database from fn:userDetailsInDB ")
 
     sqlQuery = """SELECT * FROM appUsers WHERE name=?"""
     txn.execute(sqlQuery, (userName,))
@@ -158,14 +158,16 @@ def userDetailsInDB(dbFileName, userName, userEmail="", userPwd=""):
 
     if len(data) == 0:
         return False
-    # elif len(data) > 1:
-        # raise Exception("Database has multiple entries for user = " + userName)
+    elif len(data) > 1:
+        print("\n!!!! Warning !!!!\nDatabase {} ; has multiple entries for userName = {}")
+        print("## Please Check the database once")
+        printAllData(dbFileName)
     else:
         for row in data:
             if row[2].upper() != userEmail:
                 result = False
-            elif len(userPwd) != 0:
-                if row[3] != userPwd:
+
+            if len(userPwd) != 0 and row[3] != userPwd:
                     result = False
 
     return result
@@ -173,48 +175,47 @@ def userDetailsInDB(dbFileName, userName, userEmail="", userPwd=""):
 
 
 
-def addNewUserInDB(currentSession, newName, newEmail, newPswd):
+
+def addNewUserInDB(dbFileName, newName, newEmail, newPswd):
     result = False
     # newUserInDB = userDetailsInDB(currentSession["dbPath"], newName, newEmail, "register")
-    currentSession, isNewUserInDB = getUseridFromDB(currentSession, newName, newEmail)
-    print("\n#### Print after getUseridFromDB currentSession = {}\nisnewUserInDB = {}".format(currentSession, isNewUserInDB) )
+    userId, userType, isNewUserInDB = getUseridFromDB(dbFileName, newName, newEmail)
 
     if isNewUserInDB:
         raise Exception("User Already exist in database, name = " + newName)
     else:
-        connect = sqlite3.connect(currentSession["dbPath"])
+        connect = sqlite3.connect(dbFileName)
         print("Connected to SQL Database, from fn:addNewUserInDB")
 
         sqlQuery = """INSERT INTO appUsers(userid, name, email, password) VALUES(?,?,?,?)"""
         txn = connect.cursor()
-        txn.execute(sqlQuery, (currentSession["userid"], newName, newEmail, newPswd))
+        txn.execute(sqlQuery, (userId, newName, newEmail, newPswd))
         connect.commit()
         result = True
 
-    return result
+    return userId, userType, result
 
 
 
 
-def getUseridFromDB(currentSession, userName, userEmail):
+def getUseridFromDB(dbFileName, userName, userEmail):
     """
     Function to get and store userID from database table into session. In case the user does't exist 
     i.e. new user then get the last userID in table so that new userid can be created and appended.
     """
     userID = 0
-    isUserInDB = userDetailsInDB(currentSession["dbPath"], userName,userEmail)
-    print("is user in database? : ", isUserInDB)
+    isUserInDB = userDetailsInDB(dbFileName, userName,userEmail)
+    # print("is user in database? : ", isUserInDB)
 
-    connect = sqlite3.connect(currentSession["dbPath"])
+    connect = sqlite3.connect(dbFileName)
     txn = connect.cursor()
 
     if isUserInDB:
         sqlQuery = """SELECT userid FROM appUsers WHERE name=?"""
         txn.execute(sqlQuery, (userName,))
         data = txn.fetchall()
-        currentSession["userid"] = data[0][0]
-        currentSession["userType"] = "existing-user"
-    # If userName string is empty it signifies new member, hence get last entries userId
+        userID = data[0][0]
+        userType = "existing-user"
     else:
         sqlQuery = """SELECT * FROM appUsers ORDER BY userid DESC LIMIT 1"""
         txn.execute(sqlQuery)
@@ -222,11 +223,10 @@ def getUseridFromDB(currentSession, userName, userEmail):
         # print("data fetched = ", data)
         if len(data) > 0:
             userID = data[0][0]
-        currentSession["userid"] = userID + 1
-        currentSession["userType"] = "new-user"
+        userID += 1
+        userType = "new-user"
 
-    return currentSession, isUserInDB
-
+    return userID, userType, isUserInDB
 
 
 
@@ -243,8 +243,6 @@ def printAllData(dbFileName):
     print("Data in database = ", data)
 
     return
-
-
 
 
 
