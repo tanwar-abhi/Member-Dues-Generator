@@ -19,6 +19,8 @@ from datetime import date
 # Create template from docx file to efficienty edit
 from docxtpl import DocxTemplate
 
+from werkzeug.utils import secure_filename
+
 
 
 # Function to check if the given file extension is accepted for uploading or not.
@@ -32,7 +34,24 @@ def isAllowed(fileName, EXTENSIONS):
 
 
 
+# This function checks the uploaded file for the allowed extensions and returns "True" in case 
+# all checks and preprocessing of the file was done successfully.
+def fileUploadCheck_Preprocess(uploadedFileName, ALLOWED_EXTENSIONS, typeFile):
 
+    result = True
+
+    # Checking if uploaded data File in post request
+    if isAllowed(uploadedFileName, EXTENSIONS=ALLOWED_EXTENSIONS):
+        # session["allowedDataFile"] = True
+        print("##{} File uploaded successfully in query page.\n".format(typeFile))
+        securedFileName = secure_filename(uploadedFileName)
+    else:
+        print("!!!! # Error :: unable to upload file")
+        # session["allowedDataFile"] = False
+        result = False
+
+
+    return result, securedFileName
 
 
 

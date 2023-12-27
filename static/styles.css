@@ -144,9 +144,9 @@ body {
     text-align: center;
     width: 500px;
     padding:10px;
-    margin-top: 20px;
+    /* margin-top: 20px; */
     margin-right: auto;
-    margin-bottom: 100px;
+    /* margin-bottom: 100px; */
     margin-left: auto
     /* margin: 10px 100px 100px 200px; */
 }
@@ -220,7 +220,7 @@ body {
 
 /* Darker background on mouse-over */
 .login-btns:hover {
-    background-color: darkorchid;
+    background-color: rgb(138, 89, 162);
 }
 
 

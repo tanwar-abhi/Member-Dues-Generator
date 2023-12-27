@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+
+{% block body %}
+
+	{% block logout %}
+		<form align="right" name="form1" method="post" action="/logout">
+			<label>
+				<input class="logout-btns" name="userLogout" type="submit" id="button-logout" value="log out">
+			</label>
+		</form>
+	{% endblock %}
+
+
+
+	<form action="/defaulter" method="post" enctype="multipart/form-data">
+		<div class="container">
+			<p>
+				Please fill the following details to generate all defaulters members list:<br>
+			</p>
+			<div class="box-center">
+				<label for="membersDataFile">Select input data file <br>(only xls or other excel file formats supported):</label>
+				<br><br>
+				<input type="file" id="membersDataFile" name="datafile" required>
+			</div>
+			<img src="static/images/dbIcon.png" alt="Database file upload" width="60" height="40">
+			<br>
+			<button class="login-btns" type="submit">Generate Defaulters</button>
+		</div>
+	</form>
+
+{% endblock %}

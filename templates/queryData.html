@@ -10,6 +10,7 @@
         </form>
     {% endblock %}
 
+
     <form action="/query" method="post" enctype="multipart/form-data">
         <div class="container">
             <br>Please fill the following details to generate the Quaterly Maintenance demand for the members:<br>
@@ -31,31 +32,27 @@
             <br>
 
             <span>
-                <input type="radio" name="inputSelection" onclick="disableMemberInput()"> Flat Number
-                <input type="radio" name="inputSelection" onclick="disableFlatInput()"> Membership Number
-                <input type="radio" name="inputSelection" onclick="disableAllInputs('fltNo')"> All Flats
-                <input type="radio" name="inputSelection" onclick="disableAllInputs('memberNo')"> All Members
+                <input type="radio" id="flatSelected" name="inputSelection" onclick="displayFlatInput()"> Flat Number
+                <input type="radio" id="memberSelected"  name="inputSelection" onclick="disapayMemberInput()"> Membership Number
+                <input type="radio" id ="allFaltSelected" name="inputSelection" value="allFlats" onclick="allInputsHidden()"> All Flats
+                <input type="radio" id="allMembersSelected" name="inputSelection" value="allMembers" onclick="allInputsHidden()"> All Members
             </span>
             <br>
 
-            <!-- <span>
-                <input type="radio" name="inputSelection" id="flatNum" onclick="disableMemberInput()">
-                <label for="flatNum">Flat Number</label>
-                <input type="radio" name="inputSelection" id="memberNum" onclick="disableFlatInput()">
-                <label for="memberNum">Membership Number</label>
-                <input type="radio" name="inputSelection" id="allFlat" onclick="disableAllInputs('fltNo')">
-                <label for="allFlat">All Flats</label>
-                <input type="radio" name="inputSelection" id="allMember" onclick="disableAllInputs('memberNo')">
-                <label for="allMember">All Members</label>
-            </span> -->
 
-            <input type="text" name="FlatNo" id="fltNo" autocomplete="off" autofocus placeholder="Flat Number">
-            <!-- <input type="text" style="display: none;" name="FlatNo" id="fltNo" autocomplete="off" autofocus placeholder="Flat Number"> -->
+            <!-- <div id="ifFlatNoSelected" style="visibility: hidden;"> -->
+            <div id="ifFlatNoSelected" style="visibility: visible;">
+                <input type="text" name="FlatNo" id="textboxFlat" autocomplete="off" autofocus placeholder="Flat Number">
+            </div>
+
+
+            <!-- <div id="ifMemberNoSelected" style="visibility: hidden;"> -->
+            <div id="ifMemberNoSelected" style="visibility: visible;">
+                <input type="text" name="membershipNo" id="textboxMember" autocomplete="off" autofocus placeholder="Membership Number">
+                <!-- <input type="text" style="display: none;" name="membershipNo" id="memberNo" autocomplete="off" autofocus placeholder="Membership Number"> -->
+            </div>
             <br>
-            <input type="text" name="membershipNo" id="memberNo" autocomplete="off" autofocus placeholder="Membership Number">
-            <!-- <input type="text" style="display: none;" name="membershipNo" id="memberNo" autocomplete="off" autofocus placeholder="Membership Number"> -->
-            <br><br>
-            <input type="checkbox" id="selectionAll" name="allSelected" value="allMembers" onclick="enableAllInputs()">All Members
+            <input type="checkbox" id="selectionAll" name="allSelected" onclick="enableAllInputs()">All Members
             <br>
 
             <span>
@@ -79,7 +76,6 @@
 
 	{% block script %}
 		<script type="text/javascript" src="static/dynamicFunctions.js"></script>
-        <!-- <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
 	{% endblock %}
 
 

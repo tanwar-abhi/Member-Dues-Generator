@@ -43,7 +43,7 @@ def index():
 
     if not session.get("name"):
         return redirect ("/login")
-    # return render_template("postLogin.html", userName=session["name"])
+
     return render_template("postLogin.html")
 
 
@@ -55,6 +55,9 @@ def login():
         session["name"] = request.form.get("userName")
         session["databaseName"] = "appData.db"
         session["dbPath"] = os.getcwd() + "/database/appData.db"
+        exportFolder = "Maintenance_Demand_" + date.today().strftime("%m-%Y") + "/"
+        session["downloadFolder"] = exportFolder
+
         print("\n# Session = ", session)
         return redirect("/")
     return render_template("login.html")
@@ -77,7 +80,8 @@ def register():
 
 
 
-@app.route("/logout", methods=["GET", "POST"])
+# @app.route("/logout", methods=["GET", "POST"])
+@app.route("/logout", methods=["GET"])
 def logout():
     session["name"] = None
     return redirect("/")
@@ -92,7 +96,7 @@ def getQueryInputs():
         print("## Inside ROUTe=/query ; request type is POST deteected")
         if os.path.isdir(UPLOAD_FOLDER) == False:
             os.mkdir(UPLOAD_FOLDER)
-            print("## Created Upload Folder and filepath")
+            print("## Created Upload Folder and filepath = {}".format(UPLOAD_FOLDER))
 
 
         uploadedDataFile = request.files["datafile"]
@@ -133,10 +137,10 @@ def getQueryInputs():
 
 
             nextMC = 0
-            exportFolder = "Maintenance_Demand_" + date.today().strftime("%m-%Y") + "/"
-            session["outputFolder"] = exportFolder
+            exportFolder = session["downloadFolder"]
+            # session["downloadFolder"] = exportFolder
 
-            #Make folder to save all letters
+            # Make folder to save all letters
             if os.path.isdir(exportFolder) == False:
                 os.mkdir(exportFolder)
 
@@ -164,8 +168,43 @@ def getQueryInputs():
             return redirect("/logout")
 
         elif request.args.get("selection") == "defaulter":
-            return render_template("defaulterQuery.html")
+            return redirect("/defaulter")
 
     return render_template("queryData.html")
+
+
+
+
+
+@app.route("/defaulter", methods=["GET", "POST"])
+def defaulter():
+    if  request.method == "POST":
+        print("The method is post\n## Inside ROUTE = /defaulter")
+        uploadedDataFile = request.files["datafile"]
+
+        if uploadedDataFile:
+            session["allowedDataFile"], securedFileName = fn.fileUploadCheck_Preprocess(uploadedDataFile.filename, 
+                                                                        ALLOWED_EXTENSIONS_DATA, "Members Data")
+
+        if session["allowedDataFile"]:
+
+            uploadedDataFile.save(os.path.join(session["downloadFolder"] , securedFileName))
+            print("Inside defaulter ROUTE \nSession = ")
+            print(session)
+
+            dataFileName = UPLOAD_FOLDER + securedFileName
+            try:
+                fn.mainDefaulter(dataFileName, session["downloadFolder"])
+            except:
+                print(" !!!! Error :: Exception caught, something when wrong in defaulter query request")
+                return render_template("failed.html", failedFileType="Error in main defaulter query function")
+
+        else:
+            return render_template("defaulterQuery.html")
+
+
+
+    else:
+        return render_template("defaulterQuery.html")
 
 
