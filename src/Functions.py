@@ -382,16 +382,17 @@ def main(dataFileName, FlatNo, memberNo, nextMC, templateFile, dirName):
 
 
 
-def mainDefaulter(dataFileName,dirName):
+def mainDefaulter(dataFileName, dirName, option=""):
 
     # Replace all Non available values (nan) by 0
     membersDF, intrestDF = getData(dataFileName)
 
-    print("Please select tpye of defaulter List :: \n")
-    print("[1] = Only Maintenance Dues Defaulters")
-    print("[2] = Only Construction cost Defaulters")
-    print("[3] = Both Construction and Maintenance Dues Defaulter\n")
-    option = input("Type index of desired defaulter list then press ENTER = ")
+    if len(option) == 0:
+        print("Please select tpye of defaulter List :: \n")
+        print("[1] = Only Maintenance Dues Defaulters")
+        print("[2] = Only Construction cost Defaulters")
+        print("[3] = Both Construction and Maintenance Dues Defaulter\n")
+        option = input("Type index of desired defaulter list then press ENTER = ")
 
     while(option.isnumeric() == False):
         print("\n## INVALID SELECTION ## please select again ##\n")
@@ -404,8 +405,8 @@ def mainDefaulter(dataFileName,dirName):
     # Defaulter list generation block
     generateDefaulters(membersDF, intrestDF, dirName, option)
 
-    print("\nMaintenance defaulters's list generated in folder = {} ".format(dirName))
-    _ = input("## PRESS ENTER TO EXIT ##\n")
+    # print("\nMaintenance defaulters's list generated in folder = {} ".format(dirName))
+    # _ = input("## PRESS ENTER TO EXIT ##\n")
 
     return
 

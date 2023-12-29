@@ -41,6 +41,11 @@ def index():
         if os.path.isfile("database/appData.db") == False:
             db.createDB("database/appData.db")
 
+    # Create upload directory, where uploaded files will be saved
+    if os.path.isdir(UPLOAD_FOLDER) == False:
+        os.mkdir(UPLOAD_FOLDER)
+        print("## Created Upload Folder and filepath = {}".format(UPLOAD_FOLDER))
+
     if not session.get("name"):
         return redirect ("/login")
 
@@ -80,8 +85,7 @@ def register():
 
 
 
-# @app.route("/logout", methods=["GET", "POST"])
-@app.route("/logout", methods=["GET"])
+@app.route("/logout", methods=["GET", "POST"])
 def logout():
     session["name"] = None
     return redirect("/")
@@ -90,13 +94,10 @@ def logout():
 
 
 @app.route("/query", methods=["GET","POST"])
-def getQueryInputs():
+def getQuery():
 
     if request.method == "POST":
         print("## Inside ROUTe=/query ; request type is POST deteected")
-        if os.path.isdir(UPLOAD_FOLDER) == False:
-            os.mkdir(UPLOAD_FOLDER)
-            print("## Created Upload Folder and filepath = {}".format(UPLOAD_FOLDER))
 
 
         uploadedDataFile = request.files["datafile"]
@@ -132,13 +133,12 @@ def getQueryInputs():
 
             FlatNo = request.form.get("FlatNo")
             memberNo = request.form.get("membershipNo")
-            print("\n################\n## Recieived data FlatNo = ", FlatNo)
-            print("## Recieived data MemberNo = {}\n".format(memberNo))
+            # print("\n################\n## Recieived data FlatNo = ", FlatNo)
+            # print("## Recieived data MemberNo = {}\n".format(memberNo))
 
 
             nextMC = 0
             exportFolder = session["downloadFolder"]
-            # session["downloadFolder"] = exportFolder
 
             # Make folder to save all letters
             if os.path.isdir(exportFolder) == False:
@@ -184,24 +184,39 @@ def defaulter():
 
         if uploadedDataFile:
             session["allowedDataFile"], securedFileName = fn.fileUploadCheck_Preprocess(uploadedDataFile.filename, 
-                                                                        ALLOWED_EXTENSIONS_DATA, "Members Data")
+                                                                        ALLOWED_EXTENSIONS_DATA, "Members Data in defaulter")
 
         if session["allowedDataFile"]:
 
-            uploadedDataFile.save(os.path.join(session["downloadFolder"] , securedFileName))
-            print("Inside defaulter ROUTE \nSession = ")
-            print(session)
+            uploadedDataFile.save(os.path.join(app.config['UPLOAD_FOLDER'] , securedFileName))
 
             dataFileName = UPLOAD_FOLDER + securedFileName
+
+
+            # Get user selected type of defaulter from webpage
+            defaulterType = request.form.get("defaulterList")
+
+            if defaulterType == "MDD":
+                defaulterType = "1"
+            elif defaulterType == "CCD":
+                defaulterType = "2"
+            else:
+                defaulterType = "3"
+
+
             try:
-                fn.mainDefaulter(dataFileName, session["downloadFolder"])
+                # Make folder to save the defaulter list
+                if os.path.isdir(session["downloadFolder"]) == False:
+                    os.mkdir(session["downloadFolder"])
+
+                fn.mainDefaulter(dataFileName, session["downloadFolder"], defaulterType)
+                return render_template("success.html", fName=securedFileName, fPath=session["downloadFolder"])
             except:
                 print(" !!!! Error :: Exception caught, something when wrong in defaulter query request")
                 return render_template("failed.html", failedFileType="Error in main defaulter query function")
 
         else:
             return render_template("defaulterQuery.html")
-
 
 
     else:
