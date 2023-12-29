@@ -139,3 +139,4 @@ dmypy.json
 # Ignore flask sessions and dabase folder
 flask_session/
 database/
+Maintenance_Demand*/

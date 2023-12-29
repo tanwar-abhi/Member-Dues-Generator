@@ -39,6 +39,7 @@ def isAllowed(fileName, EXTENSIONS):
 def fileUploadCheck_Preprocess(uploadedFileName, ALLOWED_EXTENSIONS, typeFile):
 
     result = True
+    securedFileName = ""
 
     # Checking if uploaded data File in post request
     if isAllowed(uploadedFileName, EXTENSIONS=ALLOWED_EXTENSIONS):

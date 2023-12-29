@@ -104,29 +104,22 @@ def getQuery():
         uploadedTempFile = request.files["tempfile"]
 
 
-        # Checking if uploaded data File in post request
-        if uploadedDataFile and fn.isAllowed(uploadedDataFile.filename, EXTENSIONS=ALLOWED_EXTENSIONS_DATA):
-            session["allowedDataFile"] = True
-            print("## Data File uploaded successfully in query page.\n")
-            securedDataFileName = secure_filename(uploadedDataFile.filename)
-            uploadedDataFile.save(os.path.join(app.config['UPLOAD_FOLDER'], securedDataFileName))
-        else:
-            print("!!!! DF Error :: unable to upload data file")
-            session["allowedDataFile"] = False
+        if uploadedDataFile:
+            session["allowedDataFile"], securedDataFileName = fn.fileUploadCheck_Preprocess(uploadedDataFile.filename, 
+                                                                        ALLOWED_EXTENSIONS_DATA, "xls Members Data")
 
-        # Checking if uploaded template File in post request
-        if uploadedTempFile and fn.isAllowed(uploadedTempFile.filename, EXTENSIONS=ALLOWED_EXTENSIONS_TEMP):
-            session["allowedTempFile"] = True
-            print("## Template file uploaded sucssesfully in query page.\n")
-            securedTempFileName = secure_filename(uploadedTempFile.filename)
-            uploadedTempFile.save(os.path.join(app.config['UPLOAD_FOLDER'], securedTempFileName))
-        else:
-            session["allowedTempFile"] = False
-            print("!!!! TF Error :: unable to upload Template file")
+        if uploadedTempFile:
+            session["allowedTempFile"], securedTempFileName = fn.fileUploadCheck_Preprocess(uploadedTempFile.filename, 
+                                                                        ALLOWED_EXTENSIONS_TEMP, "docx Template file")
 
 
-
+        # Checking if uploaded data, template File in post request
         if session["allowedDataFile"] and session["allowedTempFile"]:
+            # Save the uploaded files to local directory
+            uploadedDataFile.save(os.path.join(app.config['UPLOAD_FOLDER'], securedDataFileName))
+            uploadedTempFile.save(os.path.join(app.config['UPLOAD_FOLDER'], securedTempFileName))
+
+
             # Generate Doc requests
             dataFileName = UPLOAD_FOLDER + securedDataFileName
             templateFile = UPLOAD_FOLDER + securedTempFileName
@@ -136,17 +129,16 @@ def getQuery():
             # print("\n################\n## Recieived data FlatNo = ", FlatNo)
             # print("## Recieived data MemberNo = {}\n".format(memberNo))
 
-
             nextMC = 0
             exportFolder = session["downloadFolder"]
 
-            # Make folder to save all letters
-            if os.path.isdir(exportFolder) == False:
-                os.mkdir(exportFolder)
-
-            FlatNo, nextMC = fn.processUserInputs(FlatNo, nextMC)
-
             try:
+                # Make folder to save all letters
+                if os.path.isdir(exportFolder) == False:
+                    os.mkdir(exportFolder)
+
+                FlatNo, nextMC = fn.processUserInputs(FlatNo, nextMC)
+
                 fn.main(dataFileName, FlatNo, memberNo, nextMC, templateFile, exportFolder)
             except:
                 print(" !!!! Error :: Exception caught, something when wrong in query main ")
