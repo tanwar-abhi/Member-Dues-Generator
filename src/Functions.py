@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 
 # Sytem, os and shutil module to run system commands and create new, copy, remove files
-import sys
+import sys, os
 
 # Module to get today's date
 from datetime import date
@@ -19,6 +19,53 @@ from datetime import date
 # Create template from docx file to efficienty edit
 from docxtpl import DocxTemplate
 
+from werkzeug.utils import secure_filename
+
+
+
+# Function to check if the given file extension is accepted for uploading or not.
+def isAllowed(fileName, EXTENSIONS):
+    nameSplit = fileName.split('.')
+    nameSplit = nameSplit[len(nameSplit)-1]
+    if nameSplit in EXTENSIONS:
+        return True
+    return False
+
+
+
+
+# This function checks the uploaded file for the allowed extensions and returns "True" in case 
+# all checks and preprocessing of the file was done successfully.
+def fileUploadCheck_Preprocess(uploadedFileName, ALLOWED_EXTENSIONS, typeFile):
+
+    result = True
+    securedFileName = ""
+
+    # Checking if uploaded data File in post request
+    if isAllowed(uploadedFileName, EXTENSIONS=ALLOWED_EXTENSIONS):
+        # session["allowedDataFile"] = True
+        print("##{} File uploaded successfully in query page.\n".format(typeFile))
+        securedFileName = secure_filename(uploadedFileName)
+    else:
+        print("!!!! # Error :: unable to upload file")
+        # session["allowedDataFile"] = False
+        result = False
+
+
+    return result, securedFileName
+
+
+
+
+
+def processUserInputs(flatNo, NextMC):
+
+    flatNo = flatNo.upper()
+    # membershipNo = membershipNo.upper() // DON'T ADD THIS LINE here
+
+    # Set data type as integer
+    NextMC = int(NextMC)
+    return flatNo, NextMC
 
 
 
@@ -34,7 +81,7 @@ def getInputs():
     NextMC : Maintenance Cost for the next period
     '''
    
-    if len(sys.argv) == 3:
+    if len(sys.argv) == 4:
         flatNo = sys.argv[1]
         membershipNo = sys.argv[2]
         NextMC = sys.argv[3]
@@ -51,7 +98,7 @@ def getInputs():
 
     while(NextMC.isnumeric() == False):
         NextMC = input("Next Maintenance Charges = ")
-    
+
     # Convert user input to uppercase to remove user input discrepancy
     flatNo = flatNo.upper()
     # membershipNo = membershipNo.upper() // DON'T ADD THIS LINE here
@@ -80,8 +127,7 @@ def getData(dataFile):
     df_Intrest : DataFrame of Intrest for each member
     '''
 
-    # read an excel file and convert
-    # into a dataframe object
+    # read an excel file and convert into a dataframe object
     df = pd.DataFrame(pd.read_excel(dataFile))
 
     # Remove all white spaces and extra spaces from data column names for efficient calls
@@ -146,10 +192,9 @@ def getData(dataFile):
             totalIntMaint.append(0)
             interestConstruction.append(0)
 
-
     df_Member["Maintenance Dues"] = totalMaint
     df_Intrest["Interest on Maintenance"] = totalIntMaint
-    
+
     df_Member["Construction Cost Due"] = totalConstructionBal
     df_Intrest["Interest on Construction Cost"] = interestConstruction
 
@@ -160,7 +205,6 @@ def getData(dataFile):
 
 
 def searchData(flatNo, memNumber,membersDF, intrestDF):
-
 
     if (flatNo.isalnum()):
         xI = list(membersDF['FLATNO.']).index(flatNo)
@@ -180,19 +224,18 @@ def searchData(flatNo, memNumber,membersDF, intrestDF):
             "CCB" : dictMember["Construction Cost Due"], "CCI" : dictInterest["Interest on Construction Cost"]}
 
 
-
     data["PMTD"] = data["PMB"] + data["PMI"]
     data["CCTD"] = data["CCB"] + data["CCI"]
     data["Date"] = date.today().strftime("%d/%m/%Y")
-
 
     return data
 
 
 
 
+
 def GenerateDocx(FlatNo, memberNo, nextMC, membersDF, intrestDF, templateFile, folderName):
-    
+
     if memberNo.isnumeric():
         memberNo = int(memberNo)
 
@@ -208,10 +251,9 @@ def GenerateDocx(FlatNo, memberNo, nextMC, membersDF, intrestDF, templateFile, f
     if Data["FlatNo"] == 0:
         Data["FlatNo"] = "N/A"
 
-
     doc = DocxTemplate(templateFile)
     doc.render(Data)
-    
+
     # Path and name of new file created
     if (Data["FlatNo"].isalnum()):
         outfileName = folderName + Data["FlatNo"] + ".docx"
@@ -221,6 +263,8 @@ def GenerateDocx(FlatNo, memberNo, nextMC, membersDF, intrestDF, templateFile, f
     doc.save(outfileName)
 
     return
+
+
 
 
 
@@ -238,9 +282,8 @@ def generateDefaulters(membersDF, intrestDF, dirName, option):
     # Drop all rows from interest Data frame with no member names (unalloted)
     intrestDF.drop([i+1 for i in zeroRows], inplace = True)
 
-
     defaulterDF = membersDF.filter(["SL.NO.","NAME", "M.SHIPNO.", "FLATNO."], axis=1)
-    
+
     if option == 1 or option == 3:
         defaulterDF["Maintenance Dues"] = membersDF["Maintenance Dues"].values
         defaulterDF["Interest on Maintenance Dues"] = intrestDF["Interest on Maintenance"].values
@@ -257,12 +300,9 @@ def generateDefaulters(membersDF, intrestDF, dirName, option):
     defaulterDF.rename(columns = {'FLATNO.':'Flat No.'}, inplace = True)
     defaulterDF.rename(columns = {'M.SHIPNO.':'Membership No.'}, inplace = True)
 
-
-
     # Get date of dues calculation form excel file
     excelDate = str(defaulterDF["NAME"][0])
     excelDate = excelDate.split()
-
 
     # Remove all 0 dues values i.e. non defaulters from Data Frame
     if option == 1 or option == 3:
@@ -285,7 +325,6 @@ def generateDefaulters(membersDF, intrestDF, dirName, option):
     # Adding space before final comment
     defaulterDF = defaulterDF.append(pd.Series([np.nan for _ in defaulterDF.columns], index=defaulterDF.columns), ignore_index=True)
 
-
     if option == 1:
         defaulterDF.loc[len(defaulterDF)] = ["##", " NOTE : The dues are calculated till ", excelDate[0], excelDate[0], " ", "##", " "]
         fileName = dirName + "Maintenance_Defaulters_List_" + date.today().strftime("%m-%Y") + ".xlsx"
@@ -304,11 +343,11 @@ def generateDefaulters(membersDF, intrestDF, dirName, option):
 
 
 
+
 def main(dataFileName, FlatNo, memberNo, nextMC, templateFile, dirName):
 
     # Replace all Non available values (nan) by 0
     membersDF, intrestDF = getData(dataFileName)
-
 
     if (FlatNo.isalpha()):
         if FlatNo == 'ALL':
@@ -338,22 +377,23 @@ def main(dataFileName, FlatNo, memberNo, nextMC, templateFile, dirName):
     else:
         GenerateDocx(FlatNo, memberNo, nextMC, membersDF, intrestDF, templateFile, dirName)
 
-
     return
 
 
 
 
-def mainDefaulter(dataFileName,dirName):
+
+def mainDefaulter(dataFileName, dirName, option=""):
 
     # Replace all Non available values (nan) by 0
     membersDF, intrestDF = getData(dataFileName)
 
-    print("Please select tpye of defaulter List :: \n")
-    print("[1] = Only Maintenance Dues Defaulters")
-    print("[2] = Only Construction cost Defaulters")
-    print("[3] = Both Construction and Maintenance Dues Defaulter\n")
-    option = input("Type index of desired defaulter list then press ENTER = ")
+    if len(option) == 0:
+        print("Please select tpye of defaulter List :: \n")
+        print("[1] = Only Maintenance Dues Defaulters")
+        print("[2] = Only Construction cost Defaulters")
+        print("[3] = Both Construction and Maintenance Dues Defaulter\n")
+        option = input("Type index of desired defaulter list then press ENTER = ")
 
     while(option.isnumeric() == False):
         print("\n## INVALID SELECTION ## please select again ##\n")
@@ -366,9 +406,8 @@ def mainDefaulter(dataFileName,dirName):
     # Defaulter list generation block
     generateDefaulters(membersDF, intrestDF, dirName, option)
 
-    print("\nMaintenance defaulters's list generated in folder = {} ".format(dirName))
-    _ = input("## PRESS ENTER TO EXIT ##\n")
+    # print("\nMaintenance defaulters's list generated in folder = {} ".format(dirName))
+    # _ = input("## PRESS ENTER TO EXIT ##\n")
 
     return
-
 

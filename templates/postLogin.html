@@ -1,0 +1,21 @@
+
+{% extends "layout.html" %}
+
+
+{% block body %}
+
+	<div class="container">
+		<!-- Hello! {{ userName }}<br> -->
+		<!-- You are logged in with user name as <strong><em>{{ userName }}</em></strong>. -->
+		Hello! {{ session.name }}<br>
+		You are logged in with user name as <strong><em>{{ session.name }}</em></strong>.
+		<br><br>
+
+		<form action="/query" method="get">
+			<button class="login-btns" type="submit" name="selection" value="newQuery">Individual Query</button>
+			<button class="register-btns" type="submit" name="selection" value="defaulter">Defaulters</button>
+			<button class="logout-btns" type="submit" name="selection" value="logout">Logout</button>
+		</form>
+	</div>
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+    {% block logout %}
+        <form align="right" name="form1" method="post" action="/logout">
+            <label>
+                <input class="logout-btns" name="userLogout" type="submit" id="button-logout" value="log out">
+            </label>
+        </form>
+    {% endblock %}
+
+
+    <form action="/query" method="post" enctype="multipart/form-data">
+        <div class="container">
+            <br>Please fill the following details to generate the Quaterly Maintenance demand for the members:<br>
+
+            <br>Month From
+            <!-- <input name="month1" type="date" autocomplete="off" min="1" max="12" placeholder="Starting Month"> -->
+            <input name="month1" type="date" autocomplete="off">
+            to
+            <input name="month2" type="date" autocomplete="off" placeholder="Ending Month">
+            <br><br>
+
+            <select id="userQuerySelect" required>
+                <option disabled selected>Query Type</option>
+                <option value="flatNo">Single Flat No.</option>
+                <option value="memberNo">Single Member No.</option>
+                <option value="allFlats">All Flats</option>
+                <option value="allMember">All Members</option>
+            </select>
+            <br>
+
+            <span>
+                <input type="radio" id="flatSelected" name="inputSelection" onclick="displayFlatInput()"> Flat Number
+                <input type="radio" id="memberSelected"  name="inputSelection" onclick="disapayMemberInput()"> Membership Number
+                <input type="radio" id ="allFaltSelected" name="inputSelection" value="allFlats" onclick="allInputsHidden()"> All Flats
+                <input type="radio" id="allMembersSelected" name="inputSelection" value="allMembers" onclick="allInputsHidden()"> All Members
+            </span>
+            <br>
+
+
+            <div id="ifFlatNoSelected" style="visibility: hidden;">
+            <!-- <div id="ifFlatNoSelected" style="visibility: visible;"> -->
+                <input type="text" name="FlatNo" id="textboxFlat" autocomplete="off" autofocus placeholder="Flat Number">
+            </div>
+
+
+            <div id="ifMemberNoSelected" style="visibility: hidden;">
+            <!-- <div id="ifMemberNoSelected" style="visibility: visible;"> -->
+                <input type="text" name="membershipNo" id="textboxMember" autocomplete="off" autofocus placeholder="Membership Number">
+                <!-- <input type="text" style="display: none;" name="membershipNo" id="memberNo" autocomplete="off" autofocus placeholder="Membership Number"> -->
+            </div>
+            <br>
+            <input type="checkbox" id="selectionAll" name="allSelected" onclick="enableAllInputs()">All Members
+            <br>
+
+            <span>
+                <div class="box-left">
+                    <label for="membersDataFile">Select input data file <br>(only xls or other excel file formats supported):</label>
+                    <br><br>
+                    <input type="file" id="membersDataFile" name="datafile" required>
+                </div>
+
+                <div class="box-right">
+                    <label for="requestTemplate">Select input template file <br>(only .doc file formats supported):</label>
+                    <br><br>
+                    <input type="file" id="requestTemplate" name="tempfile" required>
+                </div>
+            </span>
+            <br><br><br>
+            <button class="login-btns" type="submit">Generate Demand</button>
+
+        </div>
+    </form>
+
+	{% block script %}
+		<script type="text/javascript" src="static/dynamicFunctions.js"></script>
+	{% endblock %}
+
+
+{% endblock %}

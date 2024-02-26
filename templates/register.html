@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+	<h3 class="heading2">New User Registration</h3>
+	<form action="/register" method="post">
+		<div class="container container-align">
+			<fieldset>
+				Name : <input autocomplete="off" autofocus name="uName" placeholder="Your Name" type="text" required>
+				<br><br>
+				Email : <input autocomplete="off" name="userEmail" placeholder="Your Email" type="email" required>
+				<br><br>
+				Password : <input autocomplete="off" name="userPwd" placeholder="Password" type="password" required>
+				<br><br>
+				Confirm Password : <input autocomplete="off" name="confirmPwd" placeholder="Confirm Password" type="password" required>
+				<br><br>
+				Phone Number : <input autocomplete="off" name="phoneNo" placeholder="Phone Number (optional)" type="number">
+				<!-- <input autocomplete="off" name="" -->
+				<button type="submit">Register</button>
+			</fieldset>
+		</form>
+		</div>
+
+{% endblock %}

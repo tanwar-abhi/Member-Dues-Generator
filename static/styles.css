@@ -10,8 +10,298 @@
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
     color: purple;
+    /* color: white; */
 }
 
 .formField1{
     align-content: center;
+}
+
+body {
+    background-color: #fff;
+    color: #212529;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    margin: 0px;
+    text-align: left;
+}
+
+.bodyTextMargin {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-right: 15px;
+    margin-left: 15px;
+}
+
+
+
+.container {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+    text-align: center;
+    width: 90%;
+}
+
+.container-align {
+    clear: both
+}
+
+.fieldset { 
+    overflow: hidden; 
+    margin-bottom: 5px;
+    display: inline-block;
+    width: 270px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+
+.logout-btn {
+    position:fixed;
+    right:10px;
+    top:5px;
+}
+
+
+
+.alert {
+    padding: 10px;
+    background-color: #f44336;
+    color: white;
+}
+
+
+/* vertical line */
+.vl {
+    position: absolute;
+    left: 55%;
+    border: 2px solid grey;
+    height: 240px;
+}
+
+/* text inside the vertical line */
+.vl-innertext {
+    position: absolute;
+    top: 53%;
+    left: 53.4%;
+    /* transform: translate(-50%, -50%); */
+    background-color: white;
+    border: 2px solid blueviolet;
+    border-radius: 50%;
+    padding: 8px 10px;
+    color:red;
+}
+
+
+/* hide some text on medium and large screens */
+.hide-md-lg {
+    display: none;
+}
+
+
+.login-form-left{
+/* .left-side-shift{ */
+    /* border: 2px solid black; */
+    float: left;
+    text-align: center;
+    width: 500px;
+    /* margin: 0px 10px 50px 300px; */
+    width: 500px;
+    padding:20px;
+    margin-top: 20px;
+    margin-right: auto;
+    margin-bottom: 100px;
+    margin-left: auto
+}
+
+
+
+
+.form-register{
+/* .right-side-shift{ */
+    /* border: 2px solid black; */
+    float: right;
+    /* margin: 45px 350px 50px 20px; */
+    width: 15%;
+    text-align: center;
+    width: 500px;
+    padding:20px;
+    margin-top: 20px;
+    margin-right: auto;
+    margin-bottom: 100px;
+    margin-left: auto
+}
+
+
+
+.box-center {
+    /* .left-side-shift{ */
+    border: 3px solid black;
+    float: center;
+    text-align: center;
+    width: 500px;
+    padding:10px;
+    /* margin-top: 20px; */
+    margin-right: auto;
+    /* margin-bottom: 100px; */
+    margin-left: auto
+    /* margin: 10px 100px 100px 200px; */
+}
+
+
+
+
+.box-left {
+    /* .left-side-shift{ */
+    border: 3px solid black;
+    float: left;
+    text-align: center;
+    width: 500px;
+    padding:10px;
+    margin-top: 20px;
+    margin-right: auto;
+    margin-bottom: 100px;
+    margin-left: auto
+    /* margin: 10px 100px 100px 200px; */
+}
+
+
+.box-right {
+    /* .right-side-shift{ */
+    /* border: 2px solid black; */
+    float: right;
+    border: 3px solid #969696;
+    width: 500px;
+    text-align: center;
+    padding:10px;
+    margin-top: 20px;
+    margin-right: 0;
+    margin-bottom: 100px;
+    margin-left: auto
+    /* margin: 15px 350px 100px 20px; */
+}
+
+
+
+
+/* style the submit button */
+/* input[type=submit] { */
+.register-btns{
+    background-color: #04AA6D;
+    color: white;
+    cursor: pointer;
+    vertical-align: middle;
+    text-align: center;
+    padding: 08px 12px;
+    border-radius: 10px;
+    font-size: 17px;
+}
+
+/* Darker background on mouse-over */
+.register-btns:hover {
+    background-color: darkolivegreen;
+}
+
+
+
+.login-btns{
+    background-color:blueviolet;
+    color: white;
+    cursor: pointer;
+    vertical-align: middle;
+    text-align: center;
+    padding: 08px 12px;
+    border-radius: 10px;
+    font-size: 17px;
+}
+
+/* Darker background on mouse-over */
+.login-btns:hover {
+    background-color: rgb(138, 89, 162);
+}
+
+
+.logout-btns{
+    background-color: red;
+    color: white;
+    cursor: pointer;
+    vertical-align: middle;
+    text-align: center;
+    padding: 08px 12px;
+    border-radius: 10px;
+    font-size: 17px;
+}
+
+
+/* Darker background on mouse-over */
+.logout-btns:hover {
+    background-color: darkred;
+}
+
+
+.logout-btns-small{
+    /* background-color: red; */
+    background-color: purple;
+    color: white;
+    cursor: pointer;
+    vertical-align: middle;
+    text-align: center;
+    padding: 04px 6px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+
+.download-btn {
+    background-color: DodgerBlue;
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+/* Darker background on mouse-over */
+.download-btn:hover {
+    background-color: RoyalBlue;
+}
+
+
+
+.jumbotron {
+    background-color: #477bff;
+    color: #fff;
+    padding: 0.2rem 0.2rem;
+    margin-bottom: 0.2rem;
+    text-align: center;
+}
+
+.section {
+    padding-bottom: 1rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 0.5rem;
+}
+
+.section:hover {
+    background-color: #f5f5f5;
+    transition: color 2s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    background-color: grey;
+    color: white;
+    text-align: center;
+    width:100%;
+    margin: 0 auto;
+    /* left: 550px; */
+    /* padding-left: 25px; */
+    /* padding-right: 35px; */
+    /* padding:0px; */
 }

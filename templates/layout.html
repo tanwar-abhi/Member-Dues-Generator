@@ -2,12 +2,34 @@
 
 <html lang="en">
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+
         <!-- Link the css stylesheet defined in static folder -->
         <link href="static/styles.css" rel="stylesheet">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
         <title>Maintenance Request Generator</title>
     </head>
+
     <body>
+        <h1 class="heading1">Name of Appartment CGHS Pvt. Ltd</h1>
+        <h2 class="jumbotron">Maintenance Generation Request Form</h2>
+
+        <!-- <div class="jumbotron"></div> -->
         {% block body %}
+            {% block logout %}
+            {% endblock %}
+
+            {% block script %}
+            {% endblock %}
+
+            <footer class="footer">
+                @Copyright <a href="#"> Name of Appartment </a>, Delhi, India 2020- All Right Reserved.
+            </footer>
+
         {% endblock %}
     </body>
 </html>
