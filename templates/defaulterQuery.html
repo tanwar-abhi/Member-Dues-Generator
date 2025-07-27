@@ -19,6 +19,7 @@
 				Please fill the following details to generate all defaulters members list:<br>
 			</p>
 
+			<br>
 			Type of defaulter List:
 			<select name="defaulterList" id="defaulterType" required>
 				<option disabled selected>Select Query</option>
@@ -26,14 +27,16 @@
 				<option value="CCD">Construction cost Due</option>
 				<option value="BOTH">Both Maintenance and Construction</option>
 			</select>
-			<br>
+			<br><br>
 
 			<div class="box-center">
 				<label for="membersDataFile">Select input data file <br>(only xls or other excel file formats supported):</label>
-				<br><br>
+				<br>
 				<input type="file" id="membersDataFile" name="datafile" required>
+				<!-- <img src="static/images/dbIcon.png" alt="Database file upload" width="120" height="80"> -->
+				<!-- <img src="static/images/dbIcon2.svg" alt="Database file upload" width="80" height="60"> -->
 			</div>
-			<img src="static/images/dbIcon.png" alt="Database file upload" width="60" height="40">
+
 			<br>
 			<button class="login-btns" type="submit">Generate Defaulters</button>
 		</div>

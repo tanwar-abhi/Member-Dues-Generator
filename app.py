@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, send_from_directory, send_file
 # from fileinput import filename
 from flask_session import Session
 import os, sqlite3
@@ -46,10 +46,10 @@ def index():
         os.mkdir(UPLOAD_FOLDER)
         print("## Created Upload Folder and filepath = {}".format(UPLOAD_FOLDER))
 
-    if not session.get("name"):
+    if not session.get("user"):
         return redirect ("/login")
 
-    return render_template("postLogin.html")
+    return render_template("afterLogin.html")
 
 
 
@@ -57,7 +57,7 @@ def index():
 @app.route("/login", methods=["GET","POST"])
 def login():
     if request.method == "POST":
-        session["name"] = request.form.get("userName")
+        session["user"] = request.form.get("userName")
         session["databaseName"] = "appData.db"
         session["dbPath"] = os.getcwd() + "/database/appData.db"
         exportFolder = "Maintenance_Demand_" + date.today().strftime("%m-%Y") + "/"
@@ -77,8 +77,11 @@ def register():
         email = request.form.get("userEmail")
         pwd = request.form.get("userPwd")
 
-        # Add new user to the database
-        # db.addNewUserInDB(session, userName, email, pwd)
+        # # Check if the user already is present in the database or not
+        # if not db.userDetailsInDB(session["dbPath"], userName, userEmail=email, userPwd=pwd):
+        #     # Add new user to the database
+        #     db.addNewUserInDB(session, userName, email, pwd)
+        #     return redirect("/")
 
     return render_template("register.html")
 
@@ -87,8 +90,26 @@ def register():
 
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
-    session["name"] = None
+    session.pop("user", None)
     return redirect("/")
+
+
+
+
+# @app.route("/uploads/<path:filename>",  methods=['GET', 'POST'])
+# def download_file(filename):
+#     return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
+
+
+
+
+@app.route('/download/<upload_id>')
+def downloadFile(upload_id):
+    # For windows you need to use drive name [ex: F:/Example.pdf]
+    path = "/Examples.pdf"
+    return send_file(path, as_attachment=True)
+
+
 
 
 
@@ -104,21 +125,18 @@ def getQuery():
         uploadedTempFile = request.files["tempfile"]
 
 
-        if uploadedDataFile:
+        if uploadedDataFile and uploadedTempFile:
             session["allowedDataFile"], securedDataFileName = fn.fileUploadCheck_Preprocess(uploadedDataFile.filename, 
                                                                         ALLOWED_EXTENSIONS_DATA, "xls Members Data")
 
-        if uploadedTempFile:
             session["allowedTempFile"], securedTempFileName = fn.fileUploadCheck_Preprocess(uploadedTempFile.filename, 
                                                                         ALLOWED_EXTENSIONS_TEMP, "docx Template file")
-
 
         # Checking if uploaded data, template File in post request
         if session["allowedDataFile"] and session["allowedTempFile"]:
             # Save the uploaded files to local directory
             uploadedDataFile.save(os.path.join(app.config['UPLOAD_FOLDER'], securedDataFileName))
             uploadedTempFile.save(os.path.join(app.config['UPLOAD_FOLDER'], securedTempFileName))
-
 
             # Generate Doc requests
             dataFileName = UPLOAD_FOLDER + securedDataFileName
@@ -141,7 +159,7 @@ def getQuery():
 
                 fn.main(dataFileName, FlatNo, memberNo, nextMC, templateFile, exportFolder)
             except:
-                print(" !!!! Error :: Exception caught, something when wrong in query main ")
+                print(" !!!! Error :: Exception caught, something when wrong in query main : 117")
                 return render_template("failed.html", failedFileType="Error in main query function")
 
             return render_template("success.html", fName=securedDataFileName, fPath=UPLOAD_FOLDER)
@@ -201,10 +219,12 @@ def defaulter():
                 if os.path.isdir(session["downloadFolder"]) == False:
                     os.mkdir(session["downloadFolder"])
 
-                fn.mainDefaulter(dataFileName, session["downloadFolder"], defaulterType)
+                print("Session = ", session)
+
+                session["file_to_download"] = fn.mainDefaulter(dataFileName, session["downloadFolder"], defaulterType)
                 return render_template("success.html", fName=securedFileName, fPath=session["downloadFolder"])
             except:
-                print(" !!!! Error :: Exception caught, something when wrong in defaulter query request")
+                print(" !!!! Error :: Exception caught, something when wrong in defaulter query request : 189")
                 return render_template("failed.html", failedFileType="Error in main defaulter query function")
 
         else:

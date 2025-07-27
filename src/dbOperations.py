@@ -5,17 +5,21 @@ import sqlite3
 
 # class databaseOps():
 
-#     def __init__(self, webSession, connection):
-#         self.webSession = webSession
-#         self.connection = connection
+#     def __init__(self, dbPath, dbEngine):
+#         self.dbPath = dbPath
+#         self.dbEngine = dbEngine.upper()
+#         # self.connection = connection
 
 
 #     def connectDB(self):
-#         self.connection = sqlite3.connect(self.webSession["dbPath"])
+#         # self.connection = sqlite3.connect(self.webSession["dbPath"])
+#         if self.dbEngine == "SQLITE3":
+#             self.connection = sqlite3.connect(self.dbPath)
 #         return
-    
+
+
 #     def disconnectDB(self):
-#         self.connection.close
+#         self.connection.close()
 #         return
 
 
@@ -31,6 +35,7 @@ import sqlite3
 #         print("Database Name = database/appData.db")
 #         print("Table Name = appData.appUsers\n")
 #         return
+
 
 
 
@@ -53,7 +58,7 @@ import sqlite3
 
 
 
-#     def userDetailsInDB(self, userName, userEmail="", querySender="login", userPwd=""):
+#     def userDetailsInDB(self, userName, userEmail="", userPwd=""):
 
 #         userEmail = userEmail.upper()
 #         txn = self.connection.cursor()
@@ -68,19 +73,28 @@ import sqlite3
 #         if len(data) == 0:
 #             return False
 #         elif len(data) > 1:
-#             raise Exception("Database has multiple entries for user = " + userName)
+#             print("\n!!!! Warning !!!!\nDatabase {} ; has multiple entries for userName = {}".format())
+#             print("## Please Check the database once")
+#             # printAllData(dbFileName)
+#             # raise Exception("Database has multiple entries for user = " + userName)
 #         else:
 #             for row in data:
-#                 if row[2] != userEmail:
+#                 if row[2].upper() != userEmail:
 #                     result = False
-#                 elif querySender == "login":
-#                     if row[3] != userPwd:
-#                         result = False
+#                 # elif querySender == "login":
+#                     # if row[3] != userPwd:
+#                     #     result = False
+#                 if len(userPwd) != 0 and row[3] != userPwd:
+#                     result = False
 #         return result
 
 
 
-#     def getUseridFromDB(self, userName):
+
+
+
+
+#     def getUseridFromDB(self, userName, userEmail):
 #         """
 #         Function to get and store userID from database table into session. In case the user does't exist 
 #         i.e. new user then get the last userID in table so that new userid can be created and appended.
@@ -111,6 +125,78 @@ import sqlite3
 #             self.webSession["userType"] = "new-user"
 
 #         return self.webSession
+
+
+
+
+
+
+#     def getUserIdFromDB(dbFileName, userName, userEmail):
+#         """
+#         Function to get and store userID from database table into session. In case the user does't exist 
+#         i.e. new user then get the last userID in table so that new userid can be created and appended.
+#         """
+#         userID = 0
+#         isUserInDB = userDetailsInDB(dbFileName, userName,userEmail)
+#         # print("is user in database? : ", isUserInDB)
+
+#         connect = sqlite3.connect(dbFileName)
+#         txn = connect.cursor()
+
+#         if isUserInDB:
+#             sqlQuery = """SELECT userid FROM appUsers WHERE name=?"""
+#             txn.execute(sqlQuery, (userName,))
+#             data = txn.fetchall()
+#             userID = data[0][0]
+#             userType = "existing-user"
+#         else:
+#             sqlQuery = """SELECT * FROM appUsers ORDER BY userid DESC LIMIT 1"""
+#             txn.execute(sqlQuery)
+#             data = txn.fetchall()
+#             # print("data fetched = ", data)
+#             if len(data) > 0:
+#                 userID = data[0][0]
+#             userID += 1
+#             userType = "new-user"
+
+#         return userID, userType, isUserInDB
+
+
+
+
+#     def printAllData(self):
+
+#     # connect = sqlite3.connect(dbFileName)
+#     # txn = connect.cursor()
+#     # self.connection = sqlite3.connect(self.dbPath)
+
+#     txn = self.connection.connect.cursor()
+#     sqlQuery = """SELECT * FROM appUsers"""
+#     txn.execute(sqlQuery)
+#     data = txn.fetchall()
+
+#     print("Data in database = ", data)
+
+#     return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -179,7 +265,7 @@ def userDetailsInDB(dbFileName, userName, userEmail="", userPwd=""):
 def addNewUserInDB(dbFileName, newName, newEmail, newPswd):
     result = False
     # newUserInDB = userDetailsInDB(currentSession["dbPath"], newName, newEmail, "register")
-    userId, userType, isNewUserInDB = getUseridFromDB(dbFileName, newName, newEmail)
+    userId, userType, isNewUserInDB = getUserIdFromDB(dbFileName, newName, newEmail)
 
     if isNewUserInDB:
         raise Exception("User Already exist in database, name = " + newName)
@@ -198,7 +284,7 @@ def addNewUserInDB(dbFileName, newName, newEmail, newPswd):
 
 
 
-def getUseridFromDB(dbFileName, userName, userEmail):
+def getUserIdFromDB(dbFileName, userName, userEmail):
     """
     Function to get and store userID from database table into session. In case the user does't exist 
     i.e. new user then get the last userID in table so that new userid can be created and appended.

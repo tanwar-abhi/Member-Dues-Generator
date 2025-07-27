@@ -51,7 +51,6 @@ def fileUploadCheck_Preprocess(uploadedFileName, ALLOWED_EXTENSIONS, typeFile):
         # session["allowedDataFile"] = False
         result = False
 
-
     return result, securedFileName
 
 
@@ -324,6 +323,9 @@ def generateDefaulters(membersDF, intrestDF, dirName, option):
 
     # Adding space before final comment
     defaulterDF = defaulterDF.append(pd.Series([np.nan for _ in defaulterDF.columns], index=defaulterDF.columns), ignore_index=True)
+    print("last 5 rows entries of DefaulterDF after append = \n", defaulterDF.tail())
+    concatdefaulterDF = defaulterDF.concat(pd.Series([np.nan for _ in defaulterDF.columns], index=defaulterDF.columns), axis=0)
+    print("last 5 rows entries of DefaulterDF after concat = \n", concatdefaulterDF.tail())
 
     if option == 1:
         defaulterDF.loc[len(defaulterDF)] = ["##", " NOTE : The dues are calculated till ", excelDate[0], excelDate[0], " ", "##", " "]
@@ -338,7 +340,7 @@ def generateDefaulters(membersDF, intrestDF, dirName, option):
     # Export all data to excel file
     defaulterDF.to_excel(fileName, index = False)
 
-    return
+    return fileName
 
 
 
@@ -404,10 +406,10 @@ def mainDefaulter(dataFileName, dirName, option=""):
         option = input("Type index of desired defaulter list then press ENTER = ")
 
     # Defaulter list generation block
-    generateDefaulters(membersDF, intrestDF, dirName, option)
+    fileName = generateDefaulters(membersDF, intrestDF, dirName, option)
 
     # print("\nMaintenance defaulters's list generated in folder = {} ".format(dirName))
     # _ = input("## PRESS ENTER TO EXIT ##\n")
 
-    return
+    return fileName
 

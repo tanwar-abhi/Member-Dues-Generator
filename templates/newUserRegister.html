@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+	<h2>A new user has been created successfully.</h2>
+	<br>
+	<div class="container container-align">
+		The details of new user are as follow :
+		<ul>
+			<li>UserId : user-id </li>
+			<li>User Name : {{ userName }} </li>
+			<li>Registered email : {{ user }} </li>
+			<li>Phone Number : {{ phoneNumber }} </li>
+		</ul>
+	</div>
+
+	<form action="/" method="get">
+		<button type="submit">Login</button>
+	</form>
+
+{% endblock %}
