@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, send_from_directory, send_file
+from flask import Flask, render_template, request, redirect, session, send_from_directory, send_file, jsonify
 # from fileinput import filename
 from flask_session import Session
 import os, sqlite3
@@ -25,7 +25,7 @@ Session(app)
 # File upload path and configurations
 UPLOAD_FOLDER = os.getcwd() + "/database/fileUploaded/"
 ALLOWED_EXTENSIONS_DATA = {"xls", "xlsx", "xlsm", "xlsb", "csv"}
-ALLOWED_EXTENSIONS_TEMP = {"doc", "docx", "odt"}
+ALLOWED_EXTENSIONS_TEMPLATE = {"doc", "docx", "odt"}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
@@ -127,10 +127,10 @@ def getQuery():
 
         if uploadedDataFile and uploadedTempFile:
             session["allowedDataFile"], securedDataFileName = fn.fileUploadCheck_Preprocess(uploadedDataFile.filename, 
-                                                                        ALLOWED_EXTENSIONS_DATA, "xls Members Data")
+                                                                        ALLOWED_EXTENSIONS_DATA, "Members Data")
 
             session["allowedTempFile"], securedTempFileName = fn.fileUploadCheck_Preprocess(uploadedTempFile.filename, 
-                                                                        ALLOWED_EXTENSIONS_TEMP, "docx Template file")
+                                                                        ALLOWED_EXTENSIONS_TEMPLATE, "Template file")
 
         # Checking if uploaded data, template File in post request
         if session["allowedDataFile"] and session["allowedTempFile"]:

@@ -6,3 +6,4 @@ Flask
 jinja2
 xlrd
 openpyxl
+logto

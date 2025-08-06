@@ -28,8 +28,8 @@ def isAllowed(fileName, EXTENSIONS):
     nameSplit = fileName.split('.')
     nameSplit = nameSplit[len(nameSplit)-1]
     if nameSplit in EXTENSIONS:
-        return True
-    return False
+        return True, nameSplit
+    return False, nameSplit
 
 
 
@@ -40,14 +40,17 @@ def fileUploadCheck_Preprocess(uploadedFileName, ALLOWED_EXTENSIONS, typeFile):
 
     result = True
     securedFileName = ""
+    fileExtn = ""
+
+    isFileValid, fileExtn = isAllowed(uploadedFileName, EXTENSIONS=ALLOWED_EXTENSIONS)
 
     # Checking if uploaded data File in post request
-    if isAllowed(uploadedFileName, EXTENSIONS=ALLOWED_EXTENSIONS):
+    if isFileValid:
         # session["allowedDataFile"] = True
-        print("##{} File uploaded successfully in query page.\n".format(typeFile))
+        print("##{} File in {} format uploaded successfully in query page.\n".format(typeFile, fileExtn))
         securedFileName = secure_filename(uploadedFileName)
     else:
-        print("!!!! # Error :: unable to upload file")
+        print("!!!! # Error :: unable to upload file, file format of {} not currently supported".format(fileExtn))
         # session["allowedDataFile"] = False
         result = False
 
